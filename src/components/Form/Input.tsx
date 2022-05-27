@@ -5,7 +5,7 @@ interface InputProps extends ChakraInputProps {
     label?: string;
 }
 
-export function Input({ name, label, ...props }: InputProps) {
+export function Input({ name, label, size, ...props }: InputProps) {
     return (
         <FormControl>
             {!!label && <FormLabel htmlFor={name}>{label}</FormLabel>}
@@ -15,7 +15,7 @@ export function Input({ name, label, ...props }: InputProps) {
                 type='email'
                 focusBorderColor="blue.500"
                 bgColor='gray.50'
-                size='lg'
+                size={size}
                 {...props}
 
             />
