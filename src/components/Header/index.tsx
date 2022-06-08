@@ -2,7 +2,6 @@ import {
   Box,
   Flex,
   Text,
-  IconButton,
   Button,
   Stack,
   Collapse,
@@ -11,14 +10,20 @@ import {
   useDisclosure,
   Image
 } from '@chakra-ui/react';
+import MobileNav from './MobileNav';
 
 export default function WithSubnavigation() {
   const { isOpen, onToggle } = useDisclosure();
 
   return (
-    <Box>
+    <Box
+      w='100%'
+      position='absolute'
+      boxShadow='md'
+    >
       <Flex
         bg={useColorModeValue('blueGradient', 'gray.800')}
+        boxShadow='lg'
         color={useColorModeValue('gray.600', 'white')}
         minH={'60px'}
         py={{ base: 2 }}
