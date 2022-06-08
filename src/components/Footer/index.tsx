@@ -7,6 +7,7 @@ import FooterSocials from "./socials";
 export default function Footer() {
   return (
     <Box
+      as='footer'
       position='relative'
       bg='blueGradient'
       bottom={'0'}

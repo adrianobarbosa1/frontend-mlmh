@@ -24,7 +24,7 @@ export default function Home() {
     <>
       <Flex
         w='100%'
-        h='39rem'
+        h='40rem'
         pt='5rem'
         background='url(/img/background.png) center/cover no-repeat'
         direction='column'

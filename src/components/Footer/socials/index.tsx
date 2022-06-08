@@ -1,4 +1,4 @@
-import { Box, Flex, Stack } from "@chakra-ui/react";
+import { Box, Flex, HStack, Stack } from "@chakra-ui/react";
 import React from "react";
 import { FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa";
 import styles from "./styles.module.scss";
@@ -9,8 +9,8 @@ export default function FooterSocials() {
       justifyContent='center'
       pt='2rem'
     >
-      <Stack
-        spacing='20px'
+      <HStack
+        spacing='4'
       >
         <Flex
           m={0.5}
@@ -26,11 +26,7 @@ export default function FooterSocials() {
             <FaFacebookF />
           </a>
         </Flex>
-      </Stack>
 
-      <Stack
-        spacing='20px'
-      >
         <Flex
           m={0.5}
           bg='white'
@@ -45,11 +41,7 @@ export default function FooterSocials() {
             <FaInstagram />
           </a>
         </Flex>
-      </Stack>
 
-      <Stack
-        spacing='20px'
-      >
         <Flex
           m={0.5}
           bg='white'
@@ -64,7 +56,7 @@ export default function FooterSocials() {
             <FaYoutube />
           </a>
         </Flex>
-      </Stack>
+      </HStack>
 
     </Flex>
   );

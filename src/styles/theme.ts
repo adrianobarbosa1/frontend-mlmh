@@ -27,7 +27,7 @@ export const theme = extendTheme({
         global: {
             body: {
                 bgGradient: 'linear(to-r, gray50, gray.100)',
-                color: 'black.100'
+                color: 'black.100',
             }
         }
     }
