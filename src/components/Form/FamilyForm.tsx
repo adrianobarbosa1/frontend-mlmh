@@ -52,7 +52,6 @@ export default function FamilyForm({ register }) {
                     <option value={3}>3</option>
                 </Select>
             </SimpleGrid>
-            {console.log(grupoFamiliar)}
             {grupoFamiliar &&
                 <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
                     <Input label='Nome completo' name='numero_familiar' />

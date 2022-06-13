@@ -7,22 +7,27 @@ import {
     InputProps as ChakraInputProps
 } from "@chakra-ui/react";
 import { FieldError } from 'react-hook-form'
+import NumberFormat from "react-number-format";
 
 interface InputProps extends ChakraInputProps {
     name: string;
     label?: string;
     size?: string;
+    mask?: string;
     error?: FieldError;
 }
 
 const InputBase: ForwardRefRenderFunction<HTMLInputElement, InputProps>
-    = ({ name, label, size, error = null, ...rest }, ref) => {
-        console.log(error)
+    = ({ name, label, size, mask, error = null, ...rest }, ref) => {
+        // console.log(error)
         return (
             <FormControl isInvalid={!!error}>
                 {!!label && <FormLabel htmlFor={name}>{label}</FormLabel>}
 
                 <ChakraInput
+                    as={NumberFormat}
+                    format={mask}
+                    mask="_"
                     name={name}
                     id={name}
                     focusBorderColor="blue.500"

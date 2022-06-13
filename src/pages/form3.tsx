@@ -37,10 +37,8 @@ export default function Form() {
   const { handleSubmit, register, watch } = useForm<IFormInputs>()
 
   const wathGrupoFamiliar = watch('grupo_familiar')
-  console.log(wathGrupoFamiliar)
 
   const onSubmit = data => {
-    console.log(data)
   }
 
   const handleNext = () => {

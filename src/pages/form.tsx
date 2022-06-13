@@ -8,6 +8,8 @@ import {
   FormLabel,
   Heading,
   HStack,
+  PinInput,
+  PinInputField,
   Radio,
   RadioGroup,
   Select,
@@ -20,8 +22,13 @@ import { useForm } from 'react-hook-form'
 import { ErrorMessage } from '@hookform/error-message';
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
+import NumberFormat from 'react-number-format';
 
 import { Input } from "../components/Form/Input";
+import { useMutation, useQuery } from "react-query";
+import { ApiError } from "next/dist/server/api-utils";
+import { api } from "../services/api";
+import { useRegister } from "../services/hooks/useRegister";
 
 const schema = yup.object().shape({
   nome: yup.string().required('Nome obrigatório'),
@@ -29,35 +36,37 @@ const schema = yup.object().shape({
   cpf: yup.string().required('CPF obrigatório'),
   dt_nascimento: yup.string().required('Data obrigatório'),
   telefone: yup.string().required('Telefone obrigatório'),
-  sexo: yup.string().required('O campo sexo, não pode ficar vazio'),
+  sexo: yup.string().typeError("Campo sexo é obrigatório").required('O campo sexo, não pode ficar vazio'),
   estado_civil: yup.string().required('Estado Civil obrigatório'),
   nacionalidade: yup.string().required('Nacionalidade obrigatório'),
   cep: yup.string().required('CEP obrigatório'),
+  uf: yup.string().required('UF obrigatório'),
+  municipio: yup.string().required('Município obrigatório'),
   tempo_reside: yup.number().typeError("Apenas números").required('Tempo de residencia obrigatório'),
   renda_bruta: yup.number().typeError("Apenas números").required('Renda bruta obrigatório'),
-  cadunico: yup.string().required('Possui cad. único obrigatório'),
-  vitima_violencia: yup.string().required('Campo vítima de violência, não pode ficar vazio'),
-  pcd: yup.string().required('Possui PCD obrigatório'),
-  grupo_familiar: yup.string().required('Número obrigatório'),
+  cadunico: yup.string().typeError("Campo cad. único é obrigatório").required('Possui cad. único obrigatório'),
+  vitima_violencia: yup.string().typeError("Campo vítima violencia é obrigatório").required('Campo vítima de violência, não pode ficar vazio'),
+  pcd: yup.string().typeError("Campo possui PCD é obrigatório").required('Possui PCD obrigatório'),
+  grupo_familiar: yup.string().typeError("Grupo familiar é obrigatório").required('Número obrigatório'),
   numero_cadunico: yup.string().when("cadunico", {
     is: 'possui cadunico',
-    then: yup.string().required("numero cad. único obrigatório")
+    then: yup.string().required("Numero cad. único obrigatório")
   }),
   gf_nome: yup.string().when("grupo_familiar", {
     is: 'sim',
-    then: yup.string().required("numero cad. único obrigatório")
+    then: yup.string().required("Nome obrigatório")
   }),
   gf_cpf: yup.string().when("grupo_familiar", {
     is: 'sim',
-    then: yup.string().required("numero cad. único obrigatório")
+    then: yup.string().required("CPF obrigatório")
   }),
   gf_dt_nascimento: yup.string().when("grupo_familiar", {
     is: 'sim',
-    then: yup.string().required("numero cad. único obrigatório")
+    then: yup.string().required("Data de nascimento obrigatório")
   }),
   gf_grau_parentesco: yup.string().when("grupo_familiar", {
     is: 'sim',
-    then: yup.string().required("numero cad. único obrigatório")
+    then: yup.string().required("Grau de parentesco obrigatório")
   }),
 
 
@@ -68,14 +77,26 @@ export default function Form() {
     resolver: yupResolver(schema)
   })
 
+  const createRegister = useMutation(async (register) => {
+    const response = await api.post('register', {
+      register: {
+        ...register,
+      }
+    })
+    return response.data.register
+  }, {
+
+  })
+
+  // const { data, isLoading, error } = useRegister()
+
   const wathGrupoFamiliar = watch('grupo_familiar')
   const wathCadunico = watch('cadunico')
   const wathGfQuantidade = watch('gf_quantidade')
-  console.log(errors)
+
 
   const onSubmit = async data => {
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    console.log(data)
+    await createRegister.mutateAsync(data)
   }
 
   let inputArray = []
@@ -95,25 +116,25 @@ export default function Form() {
             Pessoa {i + 1}
           </Heading>
           <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
-            <Input label='Nome completo*'
-              {...register("gf_nome", {
-                required: "Nome Obrigatório",
-              })} />
+            <Input
+              error={errors.gf_nome}
+              label='Nome completo*'
+              {...register("gf_nome")} />
 
-            <Input label='CPF*'
-              {...register("gf_cpf", {
-                required: "cpf Obrigatório",
-              })} />
+            <Input
+              error={errors.gf_cpf}
+              label='CPF*'
+              {...register("gf_cpf")} />
 
-            <Input label='Data de nascimento*'
-              {...register("gf_dt_nascimento", {
-                required: "Data nascimento Obrigatório",
-              })} />
+            <Input
+              error={errors.gf_dt_nascimento}
+              label='Data de nascimento*'
+              {...register("gf_dt_nascimento")} />
 
-            <Input label='Grau de parentesco*'
-              {...register("gf_grau_parentesco", {
-                required: "Grau parentesco Obrigatório",
-              })} />
+            <Input
+              error={errors.gf_grau_parentesco}
+              label='Grau de parentesco*'
+              {...register("gf_grau_parentesco")} />
           </SimpleGrid>
         </Flex>)
       )
@@ -170,14 +191,18 @@ export default function Form() {
             <Input
               error={errors.cpf}
               label='CPF*'
+              mask="###.###.###-##"
               {...register("cpf")} />
+
             <Input
               error={errors.dt_nascimento}
               label={`Data de Nascimento`}
+              mask="##/##/####"
               {...register("dt_nascimento")} />
             <Input
               error={errors.telefone}
               label='Telefone*'
+              mask="(##)#-####-####"
               {...register("telefone")} />
           </SimpleGrid>
 
@@ -188,35 +213,46 @@ export default function Form() {
               sx={{ display: 'flex', justifyContent: 'flex-start' }}
             >
 
-              <FormLabel as='legend'>Sexo<Text as='span' color='red'>*</Text></FormLabel>
-              <RadioGroup >
-                <HStack spacing='24px'>
-                  <Radio value='masculino'
-                    {...register("sexo")}>Masculino</Radio>
-                  <Radio value='feminino'
-                    {...register("sexo")}>Feminino</Radio>
-                </HStack>
-              </RadioGroup>
+              <Flex direction='column'>
+                <FormLabel as='legend'>Sexo<Text as='span' color='red'>*</Text></FormLabel>
+                <RadioGroup name='sexo'>
+                  <HStack spacing='24px'>
+                    <Radio value='masculino'
+                      {...register("sexo")}>Masculino</Radio>
+                    <Radio value='feminino'
+                      {...register("sexo")}>Feminino</Radio>
+                  </HStack>
+                </RadioGroup>
+                <Text as='p' color='#e53e3e' fontSize='14px'>{errors.sexo?.message}</Text>
+              </Flex>
+
             </SimpleGrid>
           </FormControl>
 
           <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
-            <Select
-              placeholder='Estado Civil*'
-              {...register("estado_civil")}>
-              <option value='solteiro'>1. Solteiro</option>
-              <option value='casado'>2. Casado</option>
-              <option value='separado'>3. Separado</option>
-              <option value='divorciado'>4. Divorciado</option>
-              <option value='viuvo'>5. Viúvo</option>
+            <Flex direction='column'>
+              <Select
+                placeholder='Estado Civil*'
+                {...register("estado_civil")}>
+                <option value='solteiro'>1. Solteiro</option>
+                <option value='casado'>2. Casado</option>
+                <option value='separado'>3. Separado</option>
+                <option value='divorciado'>4. Divorciado</option>
+                <option value='viuvo'>5. Viúvo</option>
 
-            </Select>
-            <Select
-              placeholder='Nacionalidade*'
-              {...register("nacionalidade")}>
-              <option value='nato'>Brasileiro nato</option>
-              <option value='naturalizado'>Brasileiro naturalizado</option>
-            </Select>
+              </Select>
+              <Text as='p' mt='1' color='#e53e3e' fontSize='14px'>{errors.estado_civil?.message}</Text>
+            </Flex>
+
+            <Flex direction='column'>
+              <Select
+                placeholder='Nacionalidade*'
+                {...register("nacionalidade")}>
+                <option value='nato'>Brasileiro nato</option>
+                <option value='naturalizado'>Brasileiro naturalizado</option>
+              </Select>
+              <Text as='p' mt='1' color='#e53e3e' fontSize='14px'>{errors.nacionalidade?.message}</Text>
+            </Flex>
           </SimpleGrid>
         </VStack>
 
@@ -235,6 +271,7 @@ export default function Form() {
             <Input
               error={errors.cep}
               label='CEP*'
+              mask="#####-###"
               {...register("cep")} />
             <Input label='UF' name='uf' />
             <Input label='Município' name='municipio' />
@@ -271,6 +308,7 @@ export default function Form() {
             <Input
               error={errors.renda_bruta}
               label='Renda bruta familiar*'
+              mask="$"
               {...register("renda_bruta")} />
           </SimpleGrid>
 
@@ -280,16 +318,19 @@ export default function Form() {
               spacing='4' w='100%'
               sx={{ display: 'flex', justifyContent: 'flex-start' }}
             >
+              <Flex direction='column'>
+                <FormLabel as='legend'>Possui CAD. ÚNICO?<Text as='span' color='red'>*</Text></FormLabel>
+                <RadioGroup >
+                  <HStack spacing='24px'>
+                    <Radio value='possui cadunico'
+                      {...register("cadunico")}>SIM</Radio>
+                    <Radio value='nao possui cadunico'
+                      {...register("cadunico")}>NÃO</Radio>
+                  </HStack>
+                </RadioGroup>
 
-              <FormLabel as='legend'>Possui CAD. ÚNICO?<Text as='span' color='red'>*</Text></FormLabel>
-              <RadioGroup >
-                <HStack spacing='24px'>
-                  <Radio value='possui cadunico'
-                    {...register("cadunico")}>SIM</Radio>
-                  <Radio value='nao possui cadunico'
-                    {...register("cadunico")}>NÃO</Radio>
-                </HStack>
-              </RadioGroup>
+                <Text as='p' color='#e53e3e' fontSize='14px'>{errors.cadunico?.message}</Text>
+              </Flex>
             </SimpleGrid>
           </FormControl>
 
@@ -307,16 +348,20 @@ export default function Form() {
               spacing='4' w='100%'
               sx={{ display: 'flex', justifyContent: 'flex-start' }}
             >
+              <Flex direction='column'>
+                <FormLabel as='legend'>Vítima de violência doméstica?<Text as='span' color='red'>*</Text></FormLabel>
+                <RadioGroup >
+                  <HStack spacing='24px'>
+                    <Radio value='vitima de violencia domestica'
+                      {...register("vitima_violencia")}>SIM</Radio>
+                    <Radio value='nao e vitima de violencia domestica'
+                      {...register("vitima_violencia")}>NÃO</Radio>
+                  </HStack>
+                </RadioGroup>
 
-              <FormLabel as='legend'>Vítima de violência doméstica?<Text as='span' color='red'>*</Text></FormLabel>
-              <RadioGroup >
-                <HStack spacing='24px'>
-                  <Radio value='vitima de violencia domestica'
-                    {...register("vitima_violencia")}>SIM</Radio>
-                  <Radio value='nao e vitima de violencia domestica'
-                    {...register("vitima_violencia")}>NÃO</Radio>
-                </HStack>
-              </RadioGroup>
+                <Text as='p' mt='1' color='#e53e3e' fontSize='14px'>{errors.vitima_violencia?.message}</Text>
+
+              </Flex>
             </SimpleGrid>
           </FormControl>
 
@@ -327,15 +372,20 @@ export default function Form() {
               sx={{ display: 'flex', justifyContent: 'flex-start' }}
             >
 
-              <FormLabel as='legend'>Grupo familiar possui PCD?<Text as='span' color='red'>*</Text></FormLabel>
-              <RadioGroup >
-                <HStack spacing='24px'>
-                  <Radio value='possui pcd'
-                    {...register("pcd")}>SIM</Radio>
-                  <Radio value='nao possui pcd'
-                    {...register("pcd")}>NÃO</Radio>
-                </HStack>
-              </RadioGroup>
+              <Flex direction='column'>
+                <FormLabel as='legend'>Grupo familiar possui PCD?<Text as='span' color='red'>*</Text></FormLabel>
+                <RadioGroup >
+                  <HStack spacing='24px'>
+                    <Radio value='possui pcd'
+                      {...register("pcd")}>SIM</Radio>
+                    <Radio value='nao possui pcd'
+                      {...register("pcd")}>NÃO</Radio>
+                  </HStack>
+                </RadioGroup>
+
+                <Text as='p' mt='1' color='#e53e3e' fontSize='14px'>{errors.vitima_violencia?.message}</Text>
+
+              </Flex>
             </SimpleGrid>
           </FormControl>
 
@@ -346,15 +396,19 @@ export default function Form() {
               sx={{ display: 'flex', justifyContent: 'flex-start' }}
             >
 
-              <FormLabel as='legend'>Possui grupo familiar?<Text as='span' color='red'>*</Text></FormLabel>
-              <RadioGroup >
-                <HStack spacing='24px'>
-                  <Radio value='sim'
-                    {...register("grupo_familiar")}>SIM</Radio>
-                  <Radio value='nao'
-                    {...register("grupo_familiar")}>NÃO</Radio>
-                </HStack>
-              </RadioGroup>
+              <Flex direction='column'>
+                <FormLabel as='legend'>Possui grupo familiar?<Text as='span' color='red'>*</Text></FormLabel>
+                <RadioGroup >
+                  <HStack spacing='24px'>
+                    <Radio value='sim'
+                      {...register("grupo_familiar")}>SIM</Radio>
+                    <Radio value='nao'
+                      {...register("grupo_familiar")}>NÃO</Radio>
+                  </HStack>
+                </RadioGroup>
+
+                <Text as='p' mt='1' color='#e53e3e' fontSize='14px'>{errors.vitima_violencia?.message}</Text>
+              </Flex>
             </SimpleGrid>
           </FormControl>
 

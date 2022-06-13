@@ -7,6 +7,12 @@ import Footer from '../components/Footer'
 import Header from '../components/Header'
 
 import { theme } from '../styles/theme'
+import { makeServer } from '../services/mirage';
+import { QueryClient, QueryClientProvider } from 'react-query'
+
+if (process.env.NODE_ENV === 'development') {
+  makeServer()
+}
 
 const GlobalStyle = ({ children }) => {
   return (
@@ -22,11 +28,6 @@ const GlobalStyle = ({ children }) => {
               margin-top: auto;
             }
           }
-
-
-          
-
-
         `}
       />
       {children}
@@ -34,15 +35,19 @@ const GlobalStyle = ({ children }) => {
   )
 }
 
+const queryClient = new QueryClient()
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ChakraProvider theme={theme}>
-      <GlobalStyle>
-        <Header />
-        <Component {...pageProps} />
-        <Footer />
-      </GlobalStyle>
-    </ChakraProvider>
+    <QueryClientProvider client={queryClient}>
+      <ChakraProvider theme={theme}>
+        <GlobalStyle>
+          <Header />
+          <Component {...pageProps} />
+          <Footer />
+        </GlobalStyle>
+      </ChakraProvider>
+    </QueryClientProvider>
   )
 }
 
