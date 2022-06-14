@@ -4,31 +4,27 @@ import {
   Divider,
   Flex,
   FormControl,
-  FormErrorMessage,
   FormLabel,
   Heading,
   HStack,
-  PinInput,
-  PinInputField,
   Radio,
   RadioGroup,
   Select,
   SimpleGrid,
-  Stack,
   Text,
   VStack
 } from "@chakra-ui/react";
 import { useForm } from 'react-hook-form'
-import { ErrorMessage } from '@hookform/error-message';
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
-import NumberFormat from 'react-number-format';
 
 import { Input } from "../components/Form/Input";
-import { useMutation, useQuery } from "react-query";
-import { ApiError } from "next/dist/server/api-utils";
+import { useMutation } from "react-query";
 import { api } from "../services/api";
-import { useRegister } from "../services/hooks/useRegister";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { getCepAddress, selectRegister } from "../components/features/register/registerSlice";
+import { useEffect } from "react";
+import NumberFormat from "react-number-format";
 
 const schema = yup.object().shape({
   nome: yup.string().required('Nome obrigatório'),
@@ -73,9 +69,28 @@ const schema = yup.object().shape({
 }).required();
 
 export default function Form() {
-  const { register, handleSubmit, watch, formState, formState: { errors } } = useForm({
+  const { register, setValue, handleSubmit, watch, formState, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
   })
+
+  // const { register: registro } = useAppSelector(selectRegister);
+  // const dispatch = useAppDispatch();
+
+  // useEffect(() => {
+  //   if (registro?.logradouro) {
+  //     setValue("logradouro", registro.logradouro);
+  //     setValue("bairro", registro.bairro);
+  //     setValue("municipio", registro.localidade);
+  //     setValue("uf", registro.uf);
+  //   }
+  // }, [registro])
+
+  const handleCep = (e) => {
+    const cep = e.target.value;
+    if (e.target.value.length === 9) {
+      dispatch(getCepAddress(cep));
+    }
+  }
 
   const createRegister = useMutation(async (register) => {
     const response = await api.post('register', {
@@ -124,11 +139,13 @@ export default function Form() {
             <Input
               error={errors.gf_cpf}
               label='CPF*'
+              mask="***.***.***-**"
               {...register("gf_cpf")} />
 
             <Input
               error={errors.gf_dt_nascimento}
               label='Data de nascimento*'
+              mask="**/**/****"
               {...register("gf_dt_nascimento")} />
 
             <Input
@@ -191,18 +208,18 @@ export default function Form() {
             <Input
               error={errors.cpf}
               label='CPF*'
-              mask="###.###.###-##"
+              mask="***.***.***-**"
               {...register("cpf")} />
 
             <Input
               error={errors.dt_nascimento}
               label={`Data de Nascimento`}
-              mask="##/##/####"
+              mask="**/**/****"
               {...register("dt_nascimento")} />
             <Input
               error={errors.telefone}
               label='Telefone*'
-              mask="(##)#-####-####"
+              mask="(**)*-****-****"
               {...register("telefone")} />
           </SimpleGrid>
 
@@ -271,7 +288,8 @@ export default function Form() {
             <Input
               error={errors.cep}
               label='CEP*'
-              mask="#####-###"
+              mask="*****-***"
+              // onBlur={(e) => handleCep(e)}
               {...register("cep")} />
             <Input label='UF' name='uf' />
             <Input label='Município' name='municipio' />
