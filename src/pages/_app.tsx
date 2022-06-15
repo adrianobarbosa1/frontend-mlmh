@@ -2,6 +2,7 @@ import React from 'react'
 import { ChakraProvider } from '@chakra-ui/react'
 import { Global, css } from '@emotion/react'
 import type { AppProps } from "next/app";
+import { Provider } from "react-redux";
 
 import Footer from '../components/Footer'
 import Header from '../components/Header'
@@ -9,10 +10,11 @@ import Header from '../components/Header'
 import { theme } from '../styles/theme'
 import { makeServer } from '../services/mirage';
 import { QueryClient, QueryClientProvider } from 'react-query'
+import store from '../app/store';
 
-if (process.env.NODE_ENV === 'development') {
-  makeServer()
-}
+// if (process.env.NODE_ENV === 'development') {
+//   makeServer()
+// }
 
 const GlobalStyle = ({ children }) => {
   return (
@@ -40,13 +42,15 @@ const queryClient = new QueryClient()
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <ChakraProvider theme={theme}>
-        <GlobalStyle>
-          <Header />
-          <Component {...pageProps} />
-          <Footer />
-        </GlobalStyle>
-      </ChakraProvider>
+      <Provider store={store}>
+        <ChakraProvider theme={theme}>
+          <GlobalStyle>
+            <Header />
+            <Component {...pageProps} />
+            <Footer />
+          </GlobalStyle>
+        </ChakraProvider>
+      </Provider>
     </QueryClientProvider>
   )
 }

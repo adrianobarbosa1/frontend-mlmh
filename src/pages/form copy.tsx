@@ -20,10 +20,14 @@ import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { Input } from "../components/Form/Input";
+import { useMutation, useQuery } from "react-query";
+import { api } from "../services/api";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { getCepAddress, selectRegister } from "../components/features/register/registerSlice";
 import { useEffect } from "react";
 import NumberFormat from "react-number-format";
+import axios from "axios";
+import { cepAddress } from "../components/features/register/registerAPI";
 import { MaskedInput } from "../components/Form/maskedInput";
 
 const schema = yup.object().shape({
@@ -39,13 +43,13 @@ const schema = yup.object().shape({
   uf: yup.string().required('UF obrigatório'),
   municipio: yup.string().required('Município obrigatório'),
   tempo_reside: yup.number().typeError("Apenas números").required('Tempo de residencia obrigatório'),
-  renda_bruta: yup.string().required('Renda bruta obrigatório'),
+  // renda_bruta: yup.number().typeError("Apenas números").required('Renda bruta obrigatório'),
   cadunico: yup.string().typeError("Campo cad. único é obrigatório").required('Possui cad. único obrigatório'),
   vitima_violencia: yup.string().typeError("Campo vítima violencia é obrigatório").required('Campo vítima de violência, não pode ficar vazio'),
   pcd: yup.string().typeError("Campo possui PCD é obrigatório").required('Possui PCD obrigatório'),
   grupo_familiar: yup.string().typeError("Grupo familiar é obrigatório").required('Número obrigatório'),
   numero_cadunico: yup.string().when("cadunico", {
-    is: 'sim',
+    is: 'possui cadunico',
     then: yup.string().required("Numero cad. único obrigatório")
   }),
   gf_nome: yup.string().when("grupo_familiar", {
@@ -413,28 +417,25 @@ export default function Form() {
               label='Quanto tempo reside em Anápolis?*'
               {...register("tempo_reside")} />
 
-            <FormControl>
-              <Flex direction='column'>
-                <FormLabel>Renda bruta familiar</FormLabel>
-                <Controller
-                  name='renda_bruta'
-                  defaultValue=''
-                  control={control}
-                  render={({ field }) => <NumberFormat
-                    {...field}
-                    customInput={ChakraInput}
-                    focusBorderColor="blue.500"
-                    bgColor='gray.50'
-                    thousandSeparator='.'
-                    prefix="R$"
-                    decimalSeparator=','
-                    decimalScale={2}
-                    fixedDecimalScale={true}
-                  />}
-                />
-                <Text as='p' color='#e53e3e' fontSize='14px'>{errors.renda_bruta?.message}</Text>
-              </Flex>
-            </FormControl>
+            {/* <FormControl> */}
+            {/* <FormLabel>Renda bruta familiar</FormLabel> */}
+            <Controller
+              name={'teste'}
+              defaultValue=''
+              control={control}
+              render={({ field }) => <NumberFormat
+                {...field}
+                customInput={ChakraInput}
+                focusBorderColor="blue.500"
+                bgColor='gray.50'
+                thousandSeparator='.'
+                prefix="R$"
+                decimalSeparator=','
+                decimalScale={2}
+                fixedDecimalScale={true}
+              />}
+            />
+            {/* </FormControl> */}
           </SimpleGrid>
 
           <FormControl>
@@ -447,9 +448,9 @@ export default function Form() {
                 <FormLabel as='legend'>Possui CAD. ÚNICO?<Text as='span' color='red'>*</Text></FormLabel>
                 <RadioGroup >
                   <HStack spacing='24px'>
-                    <Radio value='sim'
+                    <Radio value='possui cadunico'
                       {...register("cadunico")}>SIM</Radio>
-                    <Radio value='nao'
+                    <Radio value='nao possui cadunico'
                       {...register("cadunico")}>NÃO</Radio>
                   </HStack>
                 </RadioGroup>
@@ -459,7 +460,7 @@ export default function Form() {
             </SimpleGrid>
           </FormControl>
 
-          {wathCadunico == 'sim' &&
+          {wathCadunico == 'possui cadunico' &&
             <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
               <Input
                 error={errors.numero_cadunico}
@@ -478,9 +479,9 @@ export default function Form() {
                 <FormLabel as='legend'>Vítima de violência doméstica?<Text as='span' color='red'>*</Text></FormLabel>
                 <RadioGroup >
                   <HStack spacing='24px'>
-                    <Radio value='sim'
+                    <Radio value='vitima de violencia domestica'
                       {...register("vitima_violencia")}>SIM</Radio>
-                    <Radio value='nao'
+                    <Radio value='nao e vitima de violencia domestica'
                       {...register("vitima_violencia")}>NÃO</Radio>
                   </HStack>
                 </RadioGroup>
@@ -502,9 +503,9 @@ export default function Form() {
                 <FormLabel as='legend'>Grupo familiar possui PCD?<Text as='span' color='red'>*</Text></FormLabel>
                 <RadioGroup >
                   <HStack spacing='24px'>
-                    <Radio value='sim'
+                    <Radio value='possui pcd'
                       {...register("pcd")}>SIM</Radio>
-                    <Radio value='nao'
+                    <Radio value='nao possui pcd'
                       {...register("pcd")}>NÃO</Radio>
                   </HStack>
                 </RadioGroup>

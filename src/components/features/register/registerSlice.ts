@@ -1,4 +1,5 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { AppState } from "../../../app/store";
 import { cepAddress } from "./registerAPI";
 
 export interface Register {
@@ -12,7 +13,8 @@ export interface Register {
     nacionalidade: string;
     cep: string;
     uf: string;
-    municipio: string;
+    localidade: string;
+    bairro: string;
     quadra: string;
     lote: string;
     logradouro: string;
@@ -29,6 +31,10 @@ export interface RegisterState {
 
 const initialState: RegisterState = {
     register: {
+        nome: "",
+        email: "",
+        estado_civil: "",
+        nacionalidade: "",
         cep: "",
         complemento: "",
         cpf: "",
@@ -36,8 +42,9 @@ const initialState: RegisterState = {
         fone: "",
         sexo: "",
         logradouro: "",
+        bairro: "",
         lote: "",
-        municipio: "",
+        localidade: "",
         quadra: "",
         rg: "",
         uf: "",
@@ -71,3 +78,9 @@ export const registerSlice = createSlice({
             })
     },
 })
+
+// export const { addEventAthlete, removeEventAthlete } = registerSlice.actions;
+
+export const selectRegister = (state: AppState) => state.register;
+
+export default registerSlice.reducer;

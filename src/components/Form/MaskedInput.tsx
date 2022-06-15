@@ -13,23 +13,34 @@ interface InputProps extends ChakraInputProps {
     name: string;
     label?: string;
     size?: string;
+    thousandSeparator?: string;
+    fixedDecimalScale?: boolean;
+    decimalScale?: number;
+    decimalSeparator?: string;
+    prefix?: string;
     mask?: string;
     error?: FieldError;
 }
 
 const InputBase: ForwardRefRenderFunction<HTMLInputElement, InputProps>
-    = ({ name, label, size, mask, error = null, ...rest }, ref) => {
+    = ({ name, label, size, decimalSeparator, mask, thousandSeparator, fixedDecimalScale, decimalScale, prefix, error = null, ...rest }, ref) => {
 
         return (
             <FormControl isInvalid={!!error}>
                 {!!label && <FormLabel htmlFor={name}>{label}</FormLabel>}
-
-                <ChakraInput
+                <NumberFormat
+                    customInput={ChakraInput}
                     name={name}
                     focusBorderColor="blue.500"
                     bgColor='gray.50'
                     size={size}
+                    format={mask}
                     ref={ref}
+                    decimalSeparator={decimalSeparator}
+                    thousandSeparator={thousandSeparator}
+                    prefix={prefix}
+                    decimalScale={decimalScale}
+                    fixedDecimalScale={fixedDecimalScale}
                     {...rest}
                 />
                 {!!error && (
@@ -41,4 +52,4 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, InputProps>
         )
     }
 
-export const Input = forwardRef(InputBase)
+export const MaskedInput = forwardRef(InputBase)
