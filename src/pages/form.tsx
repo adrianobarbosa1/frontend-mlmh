@@ -31,7 +31,7 @@ const schema = yup.object().shape({
   email: yup.string().email('E-mail inválido'),
   cpf: yup.string().required('CPF obrigatório'),
   dt_nascimento: yup.string().required('Data obrigatório'),
-  telefone: yup.string().required('Telefone obrigatório'),
+  fone: yup.string().required('Telefone obrigatório'),
   sexo: yup.string().typeError("Campo sexo é obrigatório").required('O campo sexo, não pode ficar vazio'),
   estado_civil: yup.string().required('Estado Civil obrigatório'),
   nacionalidade: yup.string().required('Nacionalidade obrigatório'),
@@ -251,12 +251,12 @@ export default function Form() {
             />
 
             <Controller
-              name="telefone"
+              name="fone"
               defaultValue=''
               control={control}
               render={({ field }) => <MaskedInput
                 {...field}
-                error={errors.telefone}
+                error={errors.fone}
                 label='Telefone*'
                 mask="(##)#-####-####"
               />}
