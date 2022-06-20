@@ -29,6 +29,7 @@ import { MaskedInput } from "../components/Form/maskedInput";
 const schema = yup.object().shape({
   nome: yup.string().required('Nome obrigatório'),
   email: yup.string().email('E-mail inválido'),
+  rg: yup.string().required('RG obrigatório'),
   cpf: yup.string().required('CPF obrigatório'),
   dt_nascimento: yup.string().required('Data obrigatório'),
   fone: yup.string().required('Telefone obrigatório'),
@@ -47,6 +48,10 @@ const schema = yup.object().shape({
   numero_cadunico: yup.string().when("cadunico", {
     is: 'sim',
     then: yup.string().required("Numero cad. único obrigatório")
+  }),
+  tempo_cadunico: yup.string().when("cadunico", {
+    is: 'sim',
+    then: yup.string().required("Tempo de cad. único obrigatório")
   }),
   gf_nome: yup.string().when("grupo_familiar", {
     is: 'sim',
@@ -222,6 +227,11 @@ export default function Form() {
               error={errors.email}
               label='E-mail'
               {...register("email")}
+            />
+            <Input
+              error={errors.rg}
+              label='RG'
+              {...register("rg")}
             />
           </SimpleGrid>
 
@@ -410,7 +420,7 @@ export default function Form() {
             <Input
               error={errors.tempo_reside}
               type="number"
-              label='Quanto tempo reside em Anápolis?*'
+              label='Quanto anos de residencia em Anápolis?*'
               {...register("tempo_reside")} />
 
             <FormControl>
@@ -461,6 +471,11 @@ export default function Form() {
 
           {wathCadunico == 'sim' &&
             <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
+              <Input
+                error={errors.tempo_cadunico}
+                type="number"
+                label='Quantos anos de cad. único*'
+                {...register("tempo_cadunico")} />
               <Input
                 error={errors.numero_cadunico}
                 type="number"
