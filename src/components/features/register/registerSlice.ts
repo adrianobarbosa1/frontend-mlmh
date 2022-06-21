@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AppState } from "../../../app/store";
-import { cepAddress } from "./registerAPI";
+import { cepAddress, registerCreate } from "./registerAPI";
 
 export interface Register {
     nome: string;
@@ -61,11 +61,21 @@ export const getCepAddress = createAsyncThunk(
     }
 );
 
+export const postRegister = createAsyncThunk(
+    "user/postRegister",
+    async (data) => {
+        const response = await registerCreate(data);
+        return response;
+    }
+);
+
 export const registerSlice = createSlice({
     name: 'register',
     initialState,
     reducers: {
-
+        registerUser: (state, action) => {
+            state.register = action.payload
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -76,10 +86,17 @@ export const registerSlice = createSlice({
                 state.status = "idle";
                 state.register = { ...state.register, ...action.payload };
             })
+            .addCase(postRegister.pending, (state) => {
+                state.status = "loading";
+            })
+            .addCase(postRegister.fulfilled, (state, action) => {
+                state.status = "idle";
+                state.register = action.payload;
+            })
     },
 })
 
-// export const { addEventAthlete, removeEventAthlete } = registerSlice.actions;
+export const { registerUser } = registerSlice.actions;
 
 export const selectRegister = (state: AppState) => state.register;
 

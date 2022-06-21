@@ -13,7 +13,8 @@ import {
   Select,
   SimpleGrid,
   Text,
-  VStack
+  VStack,
+  useToast
 } from "@chakra-ui/react";
 import { Controller, useForm } from 'react-hook-form'
 import * as yup from "yup";
@@ -21,17 +22,21 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { Input } from "../components/Form/Input";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { getCepAddress, selectRegister } from "../components/features/register/registerSlice";
+import { getCepAddress, postRegister, registerUser, selectRegister } from "../components/features/register/registerSlice";
 import { useEffect } from "react";
 import NumberFormat from "react-number-format";
 import { MaskedInput } from "../components/Form/maskedInput";
+import { useRouter } from "next/router";
+
 
 const schema = yup.object().shape({
   nome: yup.string().required('Nome obrigatório'),
-  email: yup.string().email('E-mail inválido'),
-  rg: yup.string().required('RG obrigatório'),
+  email: yup.string().email('E-mail inválido').required('RG obrigatório'),
   cpf: yup.string().required('CPF obrigatório'),
-  dt_nascimento: yup.string().required('Data obrigatório'),
+  rg: yup.string().required('RG obrigatório'),
+  orgao_emissor: yup.string().required('Orgão emissor obrigatório'),
+  uf_rg: yup.string().required('UF RG obrigatório'),
+  dt_nascimento: yup.string().required('Data de nascimento obrigatório'),
   fone: yup.string().required('Telefone obrigatório'),
   sexo: yup.string().typeError("Campo sexo é obrigatório").required('O campo sexo, não pode ficar vazio'),
   estado_civil: yup.string().required('Estado Civil obrigatório'),
@@ -78,9 +83,10 @@ export default function Form() {
   const { register, control, setValue, handleSubmit, watch, formState, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
   })
-
   const { register: registro } = useAppSelector(selectRegister);
   const dispatch = useAppDispatch();
+  const router = useRouter();
+  const toast = useToast();
 
   useEffect(() => {
     if (registro?.logradouro) {
@@ -98,23 +104,6 @@ export default function Form() {
     }
   }
 
-  // async function getCep(cep: string): Promise<any | undefined> {
-  //   const { data } = await axios.get(`https://viacep.com.br/ws/${cep}/json`)
-  //   const address = {
-  //     localidade: data.localidade,
-  //     uf: data.uf,
-  //     logradouro: data.logradouro,
-  //     bairro: data.bairro,
-
-  //   }
-  //   console.log(address)
-  //   return address
-
-  // }
-
-  // const { data } = useQuery('address', () => getCep(), {
-  //   staleTime: 1000 * 5,
-  // })
 
 
   const wathGrupoFamiliar = watch('grupo_familiar')
@@ -123,8 +112,44 @@ export default function Form() {
 
 
   const onSubmit = data => {
-    // await createRegister.mutateAsync(data)
-    console.log(data)
+    data.dt_nascimento = data.dt_nascimento.split('/').reverse().join('-');
+    // dispatch(registerUser(data))
+
+    // router.push("/resume");
+    // console.log(data.dt_nascimento)
+    // data.dt_nascimento = new Intl.DateTimeFormat('pt-BR')
+    // console.log(data.dt_nascimento)
+    // {
+    //   weekday: 'short',
+    //   month: '2-digit',
+    //   day: '2-digit',
+    //   hour: '2-digit',
+    //   minute: '2-digit'
+    // }
+
+    dispatch(postRegister(data))
+      .unwrap()
+      .then((result) => {
+        toast({
+          position: 'top',
+          title: "Protocolo de cadastro:",
+          description: ` ${result.data.protocolo}`,
+          status: "success",
+          duration: 9000,
+          isClosable: false,
+        })
+        // router.push("/");
+      })
+      .catch((error) => {
+        toast({
+          position: 'top',
+          title: "Ocorreu um erro.",
+          description: `${error.message}`,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        })
+      });
   }
 
   let inputArray = []
@@ -193,6 +218,7 @@ export default function Form() {
       my='6'
       pt='5rem'
     >
+      {/* <Toaster /> */}
       <Box
         as='form'
         onSubmit={handleSubmit(onSubmit)}
@@ -224,19 +250,13 @@ export default function Form() {
               label='Nome Completo*'
               {...register("nome")}
             />
+
             <Input
               error={errors.email}
-              label='E-mail'
+              label='E-mail*'
               {...register("email")}
             />
-            <Input
-              error={errors.rg}
-              label='RG'
-              {...register("rg")}
-            />
-          </SimpleGrid>
 
-          <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
             <Controller
               name="cpf"
               defaultValue=''
@@ -247,6 +267,27 @@ export default function Form() {
                 label='CPF*'
                 mask="###.###.###-##"
               />}
+            />
+
+          </SimpleGrid>
+
+          <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
+
+            <Input
+              error={errors.rg}
+              label='RG*'
+              {...register("rg")}
+            />
+            <Input
+              error={errors.orgao_emissor}
+              label='Orgão emissor*'
+              {...register("orgao_emissor")}
+            />
+
+            <Input
+              error={errors.uf_rg}
+              label='UF RG*'
+              {...register("uf_rg")}
             />
 
             <Controller

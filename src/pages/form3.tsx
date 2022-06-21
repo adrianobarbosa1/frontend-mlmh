@@ -152,3 +152,25 @@ export default function Form() {
     </>
   );
 }
+
+
+
+<FormControl>
+              <FormLabel>Renda bruta familiar</FormLabel>
+              <Controller
+                name={'teste'}
+                defaultValue=''
+                control={control}
+                render={({ field }) => <NumberFormat
+                  {...field}
+                  customInput={ChakraInput}
+                  focusBorderColor="blue.500"
+                  bgColor='gray.50'
+                  thousandSeparator='.'
+                  prefix="R$"
+                  decimalSeparator=','
+                  decimalScale={2}
+                  fixedDecimalScale={true}
+                />}
+              />
+            </FormControl>
