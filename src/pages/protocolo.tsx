@@ -1,10 +1,25 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box, Divider, Flex, Heading, Icon } from '@chakra-ui/react'
-import icon from '../../public/img/success.gif';
-import { motion } from "framer-motion"
-import Image from "next/image";
+import animationData from '../../public/img/success.json'
+import Lottie from 'react-lottie';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { postRegister, selectRegister } from '../components/features/register/registerSlice';
 
 export default function Protocolo() {
+    const [animation, setAnimation] = useState({
+        isStopped: false, isPaused: false
+    })
+    const { register } = useAppSelector(selectRegister);
+
+    const defaultOptions = {
+        loop: false,
+        autoplay: true,
+        animationData: animationData,
+        rendererSettings: {
+            preserveAspectRatio: 'xMidYMid slice'
+        }
+    };
+
     return (
         <Flex
             w='100%'
@@ -34,10 +49,25 @@ export default function Protocolo() {
                     Cadastro realizado com sucesso!
                 </Heading>
                 <Flex as='figure' justify='center'>
-                    <Box w='200px'>
+                    {/* <Box w='200px'>
                         <Image src={icon} alt='success' />
-                    </Box>
+                    </Box> */}
+                    <Lottie options={defaultOptions}
+                        height={200}
+                        width={200}
+                        isStopped={animation.isStopped}
+                        isPaused={animation.isPaused} />
                 </Flex>
+
+                <Heading
+                    fontWeight='bold'
+                    color='text'
+                    size='md'
+                    textAlign='center'
+                    mb='2rem'
+                >
+                    Seu protocolo é: {`${register}`}
+                </Heading>
             </Box>
         </Flex >
     )

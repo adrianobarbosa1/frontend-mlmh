@@ -27,6 +27,7 @@ import { useEffect } from "react";
 import NumberFormat from "react-number-format";
 import { MaskedInput } from "../components/Form/maskedInput";
 import { useRouter } from "next/router";
+import protocolo from "./protocolo";
 
 
 const schema = yup.object().shape({
@@ -113,32 +114,12 @@ export default function Form() {
 
   const onSubmit = data => {
     data.dt_nascimento = data.dt_nascimento.split('/').reverse().join('-');
-    // dispatch(registerUser(data))
-
-    // router.push("/resume");
-    // console.log(data.dt_nascimento)
-    // data.dt_nascimento = new Intl.DateTimeFormat('pt-BR')
-    // console.log(data.dt_nascimento)
-    // {
-    //   weekday: 'short',
-    //   month: '2-digit',
-    //   day: '2-digit',
-    //   hour: '2-digit',
-    //   minute: '2-digit'
-    // }
 
     dispatch(postRegister(data))
       .unwrap()
       .then((result) => {
-        toast({
-          position: 'top',
-          title: "Protocolo de cadastro:",
-          description: ` ${result.data.protocolo}`,
-          status: "success",
-          duration: 9000,
-          isClosable: false,
-        })
-        // router.push("/");
+        dispatch(registerUser(result.data.protocolo));
+        router.push("/protocolo");
       })
       .catch((error) => {
         toast({

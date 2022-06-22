@@ -21,6 +21,7 @@ export interface Register {
     complemento: string;
     rg: string;
     uf_rg: string;
+    protocolo: string;
 }
 
 export interface RegisterState {
@@ -49,6 +50,7 @@ const initialState: RegisterState = {
         rg: "",
         uf: "",
         uf_rg: "",
+        protocolo: "",
     },
     status: "idle",
 };
@@ -62,7 +64,7 @@ export const getCepAddress = createAsyncThunk(
 );
 
 export const postRegister = createAsyncThunk(
-    "user/postRegister",
+    "register/postRegister",
     async (data) => {
         const response = await registerCreate(data);
         return response;
@@ -75,7 +77,7 @@ export const registerSlice = createSlice({
     reducers: {
         registerUser: (state, action) => {
             state.register = action.payload
-        }
+        },
     },
     extraReducers: (builder) => {
         builder
