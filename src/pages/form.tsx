@@ -29,11 +29,23 @@ import { useRouter } from "next/router";
 import protocolo from "./protocolo";
 import { MaskedInput } from "../components/Form/MaskedInput";
 
+function isValidCPF(cpf) {
+  if (typeof cpf !== 'string') return false
+  cpf = cpf.replace(/[^\d]+/g, '')
+  if (cpf.length !== 11 || !!cpf.match(/(\d)\1{10}/)) return false
+  cpf = cpf.split('').map(el => +el)
+  const rest = (count) => (cpf.slice(0, count - 12)
+    .reduce((soma, el, index) => (soma + el * (count - index)), 0) * 10) % 11 % 10
+  return rest(10) === cpf[9] && rest(11) === cpf[10]
+}
 
 const schema = yup.object().shape({
   nome: yup.string().required('Nome obrigatório'),
   email: yup.string().email('E-mail inválido').required('RG obrigatório'),
-  cpf: yup.string().required('CPF obrigatório'),
+  cpf: yup.string().test(
+    'test-invalid-cpf',
+    'cpf inválido',
+    (cpf) => isValidCPF(cpf)).required('CPF obrigatório'),
   rg: yup.string().required('RG obrigatório'),
   orgao_emissor: yup.string().required('Orgão emissor obrigatório'),
   uf_rg: yup.string().required('UF RG obrigatório'),
@@ -67,7 +79,10 @@ const schema = yup.object().shape({
   }),
   gf_cpf: yup.string().when("gf_cpf_certidao", {
     is: 'cpf',
-    then: yup.string().required("CPF obrigatório")
+    then: yup.string().test(
+      'test-invalid-cpf',
+      'cpf inválido',
+      (cpf) => isValidCPF(cpf)).required("CPF obrigatório")
   }),
   gf_certidao: yup.string().when("gf_cpf_certidao", {
     is: 'certidao',
