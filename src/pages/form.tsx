@@ -25,9 +25,9 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { getCepAddress, postRegister, registerUser, selectRegister } from "../components/features/register/registerSlice";
 import { useEffect } from "react";
 import NumberFormat from "react-number-format";
-import { MaskedInput } from "../components/Form/maskedInput";
 import { useRouter } from "next/router";
 import protocolo from "./protocolo";
+import { MaskedInput } from "../components/Form/MaskedInput";
 
 
 const schema = yup.object().shape({
@@ -52,6 +52,7 @@ const schema = yup.object().shape({
   vitima_violencia: yup.string().typeError("Campo vítima violencia é obrigatório").required('Campo vítima de violência, não pode ficar vazio'),
   pcd: yup.string().typeError("Campo possui PCD é obrigatório").required('Possui PCD obrigatório'),
   grupo_familiar: yup.string().typeError("Grupo familiar é obrigatório").required('Número obrigatório'),
+  gf_cpf_certidao: yup.string().required('CPF ou Certidão de nascimento obrigatório'),
   numero_cadunico: yup.string().when("cadunico", {
     is: 'sim',
     then: yup.string().required("Numero cad. único obrigatório")
@@ -64,9 +65,13 @@ const schema = yup.object().shape({
     is: 'sim',
     then: yup.string().required("Nome obrigatório")
   }),
-  gf_cpf: yup.string().when("grupo_familiar", {
-    is: 'sim',
+  gf_cpf: yup.string().when("gf_cpf_certidao", {
+    is: 'cpf',
     then: yup.string().required("CPF obrigatório")
+  }),
+  gf_certidao: yup.string().when("gf_cpf_certidao", {
+    is: 'certidao',
+    then: yup.string().required("Certidão de nascimento obrigatório")
   }),
   gf_dt_nascimento: yup.string().when("grupo_familiar", {
     is: 'sim',
@@ -110,9 +115,11 @@ export default function Form() {
   const wathGrupoFamiliar = watch('grupo_familiar')
   const wathCadunico = watch('cadunico')
   const wathGfQuantidade = watch('gf_quantidade')
+  const wathGfCpfCertidao = watch('gf_cpf_certidao')
 
 
   const onSubmit = data => {
+    console.log(data)
     data.dt_nascimento = data.dt_nascimento.split('/').reverse().join('-');
 
     dispatch(postRegister(data))
@@ -149,7 +156,42 @@ export default function Form() {
           >
             Pessoa {i + 1}
           </Heading>
-          <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
+          <SimpleGrid minChildWidth='300px' spacing='4' w='100%'>
+
+            <Flex direction='column' mt='2rem'>
+              <Select
+                placeholder='CPF ou Certidão de nascimento'
+                {...register("gf_cpf_certidao")}>
+                <option value='cpf'>1. CPF</option>
+                <option value='certidao'>2. Certidão de nascimento</option>
+
+              </Select>
+              <Text as='p' mt='1' color='#e53e3e' fontSize='14px'>{errors.gf_cpf_certidao?.message}</Text>
+            </Flex>
+
+            {wathGfCpfCertidao == 'cpf' &&
+              <Controller
+                name="gf_cpf"
+                defaultValue=''
+                control={control}
+                render={({ field }) =>
+                  <MaskedInput
+                    {...field}
+                    error={errors.gf_cpf}
+                    label='CPF'
+                    mask="###.###.###-##"
+                  />}
+              />
+            }
+
+            {wathGfCpfCertidao == 'certidao' &&
+              <Input
+                error={errors.gf_certidao}
+                label='Certidão de nascimento*'
+                {...register("gf_certidao")}
+              />
+            }
+
             <Input
               error={errors.gf_nome}
               label='Nome completo*'
@@ -157,22 +199,10 @@ export default function Form() {
 
 
             <Controller
-              name="gf_cpf"
-              defaultValue=''
-              control={control}
-              render={({ field }) => <Input
-                {...field}
-                error={errors.gf_cpf}
-                label='CPF*'
-                mask="###.###.###-##"
-              />}
-            />
-
-            <Controller
               name="gf_dt_nascimento"
               defaultValue=''
               control={control}
-              render={({ field }) => <Input
+              render={({ field }) => <MaskedInput
                 {...field}
                 error={errors.gf_dt_nascimento}
                 label='Data de nascimento*'
@@ -194,8 +224,8 @@ export default function Form() {
     <Flex
       w='100%'
       maxWidth={1480}
-      mx='auto'
-      px='6'
+      ml={{ base: '0.1rem' }}
+      px={{ base: '0', md: '6' }}
       my='6'
       pt='5rem'
     >
@@ -205,7 +235,7 @@ export default function Form() {
         onSubmit={handleSubmit(onSubmit)}
         flex='1'
         bg='#fff'
-        p='8'
+        p={{ base: '2', md: '8' }}
         boxShadow='dark-lg'
         rounded='xl'
       >
@@ -340,6 +370,7 @@ export default function Form() {
                 {...register("nacionalidade")}>
                 <option value='nato'>Brasileiro nato</option>
                 <option value='naturalizado'>Brasileiro naturalizado</option>
+                <option value='estrangeiro'>Estrangeiro</option>
               </Select>
               <Text as='p' mt='1' color='#e53e3e' fontSize='14px'>{errors.nacionalidade?.message}</Text>
             </Flex>
