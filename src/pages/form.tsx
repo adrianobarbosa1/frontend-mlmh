@@ -199,10 +199,7 @@ export default function Form() {
         boxShadow='dark-lg'
         rounded='xl'
       >
-        <Flex>
-          <IconButton aria-label='' size='xs' icon={<QuestionOutlineIcon />} />
-          <Text ml={2}> - Clique no Icone para mais informações!</Text>
-        </Flex>
+
         <Divider my='6' borderColor='blueOficial' />
 
         <Heading
@@ -574,6 +571,12 @@ export default function Form() {
           >
             Dados do Grupo Familiar
           </Heading>
+
+          <Flex>
+            <Text mr={2}>Para mais informações dos dados abaixo clique no icone de correspondente ao seu campo</Text>
+            <IconButton aria-label='' size='xs' icon={<QuestionOutlineIcon />} />
+          </Flex>
+
 
           <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
             <FormControl isInvalid={errors.tempo_reside} >
@@ -981,8 +984,8 @@ export default function Form() {
 
           {wathGfQuantidade && inputArray}
 
-          <Checkbox>“Declaro para todos os fins que todas as informações aqui
-            prestadas são verdadeiras e estão corretas, sob pena do art. 297 do Código Penal Brasileiro.”</Checkbox>
+          <Checkbox>Declaro para todos os fins que, todas as informações aqui
+            prestadas são verdadeiras e estão corretas, sob pena do art. 297 do Código Penal Brasileiro.</Checkbox>
 
           <Button
             type='submit'
