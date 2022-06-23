@@ -1,42 +1,87 @@
 import { forwardRef, ForwardRefRenderFunction } from "react";
 import {
+    Box,
     FormControl,
     FormErrorMessage,
     FormLabel,
+    IconButton,
     Input as ChakraInput,
-    InputProps as ChakraInputProps
+    InputProps as ChakraInputProps,
+    Popover,
+    PopoverArrow,
+    PopoverBody,
+    PopoverCloseButton,
+    PopoverContent,
+    PopoverHeader,
+    PopoverTrigger
 } from "@chakra-ui/react";
 import { FieldError } from 'react-hook-form'
 import NumberFormat from "react-number-format";
+import { QuestionOutlineIcon } from "@chakra-ui/icons";
 
 interface InputProps extends ChakraInputProps {
-    name: string;
+    nome: string;
     label?: string;
-    size?: string;
-    mask?: string;
     error?: FieldError;
+    explication?: boolean;
+    popHeader?: string;
+    popBody?: string;
 }
 
 const InputBase: ForwardRefRenderFunction<HTMLInputElement, InputProps>
-    = ({ name, label, size, mask, error = null, ...rest }, ref) => {
+    = ({ nome, label, explication, popHeader, popBody, error = null, ...rest }, ref) => {
 
         return (
-            <FormControl isInvalid={!!error}>
-                {!!label && <FormLabel htmlFor={name}>{label}</FormLabel>}
+            // <FormControl isInvalid={!!error}>
+            //     {!!label && <FormLabel htmlFor={name}>
+            //         <Box display='inline-block' mr={3}>
+            //             {label}
+            //         </Box>
+            //         {explication && (<Popover>
+            //             <PopoverTrigger>
+            //                 <IconButton aria-label={popHeader ? popHeader : ''} size='xs' icon={<QuestionOutlineIcon />} />
+            //             </PopoverTrigger>
+            //             <PopoverContent>
+            //                 <PopoverArrow />
+            //                 <PopoverCloseButton />
+            //                 <PopoverHeader>{popHeader}</PopoverHeader>
+            //                 <PopoverBody>{popBody}</PopoverBody>
+            //             </PopoverContent>
+            //         </Popover>)}
+            //     </FormLabel>}
 
+            //     <ChakraInput
+            //         // bgColor='gray.50'
+            //         // ref={ref}
+            //         {...rest}
+            //     />
+            //     {!!error && (
+            //         <FormErrorMessage>
+            //             {error?.message}
+            //         </FormErrorMessage>
+            //     )}
+            // </FormControl>
+            <FormControl isInvalid={!!error} >
+                <FormLabel htmlFor={nome}>
+                    <Box display='inline-block' mr={3}>
+                        {label}
+                    </Box>
+                    <Popover>
+                        <PopoverTrigger>
+                            <IconButton aria-label='' size='xs' icon={<QuestionOutlineIcon />} />
+                        </PopoverTrigger>
+                        <PopoverContent>
+                            <PopoverArrow />
+                            <PopoverCloseButton />
+                            <PopoverHeader>Email!</PopoverHeader>
+                            <PopoverBody>Are you sure you want to have that milkshake?</PopoverBody>
+                        </PopoverContent>
+                    </Popover>
+                </FormLabel>
                 <ChakraInput
-                    name={name}
-                    focusBorderColor="blue.500"
-                    bgColor='gray.50'
-                    size={size}
-                    ref={ref}
-                    {...rest}
                 />
-                {!!error && (
-                    <FormErrorMessage>
-                        {error.message}
-                    </FormErrorMessage>
-                )}
+                <FormErrorMessage>{error?.message}</FormErrorMessage>
+
             </FormControl>
         )
     }
