@@ -108,85 +108,85 @@ export default function Form() {
       });
   }
 
-  let inputArray = []
-  {
-    for (var i = 0; i <= wathGfQuantidade - 1; i++) {
-      inputArray.push((
-        <Flex key={wathGfQuantidade + i} direction='column' w='100%'>
-          <Divider mt='4rem' mb='6' borderColor='blueOficial' />
-          <Heading
+  // let inputArray = []
+  // {
+  //   for (var i = 0; i <= wathGfQuantidade - 1; i++) {
+  //     inputArray.push((
+  //       <Flex key={wathGfQuantidade + i} direction='column' w='100%'>
+  //         <Divider mt='4rem' mb='6' borderColor='blueOficial' />
+  //         <Heading
 
-            fontWeight='bold'
-            color='text'
-            size='md'
-            textAlign='center'
-            mb='2rem'
-          >
-            Pessoa {i + 1}
-          </Heading>
-          <SimpleGrid minChildWidth='300px' spacing='4' w='100%'>
+  //           fontWeight='bold'
+  //           color='text'
+  //           size='md'
+  //           textAlign='center'
+  //           mb='2rem'
+  //         >
+  //           Pessoa {i + 1}
+  //         </Heading>
+  //         <SimpleGrid minChildWidth='300px' spacing='4' w='100%'>
 
-            <Flex direction='column' mt='2rem'>
-              <Select
-                placeholder='CPF ou Certidão de nascimento'
-                {...register("gf_cpf_certidao")}>
-                <option value='cpf'>1. CPF</option>
-                <option value='certidao'>2. Certidão de nascimento</option>
+  //           <Flex direction='column' mt='2rem'>
+  //             <Select
+  //               placeholder='CPF ou Certidão de nascimento'
+  //               {...register("gf_cpf_certidao")}>
+  //               <option value='cpf'>1. CPF</option>
+  //               <option value='certidao'>2. Certidão de nascimento</option>
 
-              </Select>
-              <Text as='p' mt='1' color='#e53e3e' fontSize='14px'>{errors.gf_cpf_certidao?.message}</Text>
-            </Flex>
+  //             </Select>
+  //             <Text as='p' mt='1' color='#e53e3e' fontSize='14px'>{errors.gf_cpf_certidao?.message}</Text>
+  //           </Flex>
 
-            {wathGfCpfCertidao == 'cpf' &&
-              <Controller
-                name="gf_cpf"
-                defaultValue=''
-                control={control}
-                render={({ field }) =>
-                  <MaskedInput
-                    {...field}
-                    error={errors.gf_cpf}
-                    label='CPF'
-                    mask="###.###.###-##"
-                  />}
-              />
-            }
+  //           {wathGfCpfCertidao == 'cpf' &&
+  //             <Controller
+  //               name="gf_cpf"
+  //               defaultValue=''
+  //               control={control}
+  //               render={({ field }) =>
+  //                 <MaskedInput
+  //                   {...field}
+  //                   error={errors.gf_cpf}
+  //                   label='CPF'
+  //                   mask="###.###.###-##"
+  //                 />}
+  //             />
+  //           }
 
-            {wathGfCpfCertidao == 'certidao' &&
-              <Input
-                error={errors.gf_certidao}
-                label='Certidão de nascimento*'
-                {...register("gf_certidao")}
-              />
-            }
+  //           {wathGfCpfCertidao == 'certidao' &&
+  //             <Input
+  //               error={errors.gf_certidao}
+  //               label='Certidão de nascimento*'
+  //               {...register("gf_certidao")}
+  //             />
+  //           }
 
-            <Input
-              error={errors.gf_nome}
-              label='Nome completo*'
-              {...register("gf_nome")} />
+  //           <Input
+  //             error={errors.gf_nome}
+  //             label='Nome completo*'
+  //             {...register("gf_nome")} />
 
 
-            <Controller
-              name="gf_dt_nascimento"
-              defaultValue=''
-              control={control}
-              render={({ field }) => <MaskedInput
-                {...field}
-                error={errors.gf_dt_nascimento}
-                label='Data de nascimento*'
-                mask="##/##/####"
-              />}
-            />
+  //           <Controller
+  //             name="gf_dt_nascimento"
+  //             defaultValue=''
+  //             control={control}
+  //             render={({ field }) => <MaskedInput
+  //               {...field}
+  //               error={errors.gf_dt_nascimento}
+  //               label='Data de nascimento*'
+  //               mask="##/##/####"
+  //             />}
+  //           />
 
-            <Input
-              error={errors.gf_grau_parentesco}
-              label='Grau de parentesco*'
-              {...register("gf_grau_parentesco")} />
-          </SimpleGrid>
-        </Flex>)
-      )
-    }
-  }
+  //           <Input
+  //             error={errors.gf_grau_parentesco}
+  //             label='Grau de parentesco*'
+  //             {...register("gf_grau_parentesco")} />
+  //         </SimpleGrid>
+  //       </Flex>)
+  //     )
+  //   }
+  // }
 
   return (
     <Flex
