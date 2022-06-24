@@ -1,23 +1,24 @@
-import { EditIcon, QuestionIcon, QuestionOutlineIcon } from '@chakra-ui/icons'
 import {
   Box,
   Button,
   Flex,
   FormControl,
-  FormErrorMessage,
   FormLabel,
-  IconButton,
-  Input,
-  Popover,
-  PopoverArrow,
-  PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, useToast
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  Slider, SliderFilledTrack, SliderThumb, SliderTrack, useToast
 } from '@chakra-ui/react'
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 export default function formteste() {
   const { register, control, setValue, handleSubmit, watch, formState, formState: { errors } } = useForm({})
   const toast = useToast()
+  const [valor, setValor] = useState(0)
+  const handleChange = (value) => { setValor(value) }
 
   console.log(errors)
   const onSubmit = data => {
@@ -50,28 +51,21 @@ export default function formteste() {
         boxShadow='dark-lg'
         rounded='xl'
       >
-        <FormControl isInvalid={errors.nome}>
-          <FormLabel htmlFor='nome'>
+        <FormControl isInvalid={errors.estado_civil}>
+          <FormLabel htmlFor='vitima_violencia'>
             <Box display='inline-block' mr={3}>
-              Nome
+              Quantidade de Pessoas no Grupo Familiar?*
             </Box>
-            <Popover>
-              <PopoverTrigger>
-                <IconButton aria-label='' size='sm' icon={<QuestionOutlineIcon />} />
-              </PopoverTrigger>
-              <PopoverContent>
-                <PopoverArrow />
-                <PopoverCloseButton />
-                <PopoverHeader>Email!</PopoverHeader>
-                <PopoverBody>Are you sure you want to have that milkshake?</PopoverBody>
-              </PopoverContent>
-            </Popover>
           </FormLabel>
-          <Input focusBorderColor='blue' bgColor='gray.50'
-            {...register("nome", { required: "Nome é obrigatório." })}
-          />
-          <FormErrorMessage>{errors.nome?.message}</FormErrorMessage>
-
+          <Flex>
+            <NumberInput size='lg' maxW={32} defaultValue={2} min={2}>
+              <NumberInputField />
+              <NumberInputStepper>
+                <NumberIncrementStepper />
+                <NumberDecrementStepper />
+              </NumberInputStepper>
+            </NumberInput>
+          </Flex>
         </FormControl>
 
         <Button

@@ -24,7 +24,13 @@ import {
   PopoverHeader,
   PopoverBody,
   FormErrorMessage,
-  Checkbox
+  Checkbox,
+  Tooltip,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper
 } from "@chakra-ui/react";
 import { Controller, useForm } from 'react-hook-form'
 import * as yup from "yup";
@@ -33,7 +39,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Input } from "../components/Form/Input";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { getCepAddress, postRegister, registerUser, selectRegister } from "../components/features/register/registerSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import NumberFormat from "react-number-format";
 import { useRouter } from "next/router";
 import protocolo from "./protocolo";
@@ -54,6 +60,7 @@ export default function Form() {
   } = useForm({})
 
   const { register: registro } = useAppSelector(selectRegister);
+  const [switchOpen, setSwitchOpen] = useState(false)
   const dispatch = useAppDispatch();
   const router = useRouter();
   const toast = useToast();
@@ -378,12 +385,12 @@ export default function Form() {
             </FormControl>
           </SimpleGrid>
 
-          <FormControl isInvalid={errors.sexo}>
-            <SimpleGrid
-              minChildWidth='240px'
-              spacing='4' w='100%'
-              sx={{ display: 'flex', justifyContent: 'flex-start' }}
-            >
+          <SimpleGrid
+            minChildWidth='240px'
+            spacing='4' w='100%'
+            sx={{ display: 'flex', justifyContent: 'flex-start' }}
+          >
+            <FormControl isInvalid={errors.sexo}>
 
               <Flex direction='column'>
                 <FormLabel as='legend'>Sexo<Text as='span' color='red'>*</Text></FormLabel>
@@ -398,34 +405,38 @@ export default function Form() {
                 <FormErrorMessage>{errors.sexo?.message}</FormErrorMessage>
               </Flex>
 
-            </SimpleGrid>
-          </FormControl>
+            </FormControl>
+          </SimpleGrid>
 
           <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
-            <Flex direction='column'>
-              <Select
-                placeholder='Estado Civil*'
-                {...register("estado_civil")}>
-                <option value='solteiro'>1. Solteiro</option>
-                <option value='casado'>2. Casado</option>
-                <option value='separado'>3. Separado</option>
-                <option value='divorciado'>4. Divorciado</option>
-                <option value='viuvo'>5. Viúvo</option>
+            <FormControl isInvalid={errors.estado_civil}>
+              <Flex direction='column'>
+                <Select
+                  placeholder='Estado Civil*'
+                  {...register("estado_civil", { required: "Estado civil é obrigatório." })}>
+                  <option value='solteiro'>1. Solteiro</option>
+                  <option value='casado'>2. Casado</option>
+                  <option value='separado'>3. Separado</option>
+                  <option value='divorciado'>4. Divorciado</option>
+                  <option value='viuvo'>5. Viúvo</option>
 
-              </Select>
-              <Text as='p' mt='1' color='#e53e3e' fontSize='14px'>{errors.estado_civil?.message}</Text>
-            </Flex>
+                </Select>
+                <FormErrorMessage>{errors.estado_civil?.message}</FormErrorMessage>
+              </Flex>
+            </FormControl>
 
-            <Flex direction='column'>
-              <Select
-                placeholder='Nacionalidade*'
-                {...register("nacionalidade")}>
-                <option value='nato'>Brasileiro nato</option>
-                <option value='naturalizado'>Brasileiro naturalizado</option>
-                <option value='estrangeiro'>Estrangeiro</option>
-              </Select>
-              <Text as='p' mt='1' color='#e53e3e' fontSize='14px'>{errors.nacionalidade?.message}</Text>
-            </Flex>
+            <FormControl isInvalid={errors.nacionalidade}>
+              <Flex direction='column'>
+                <Select
+                  placeholder='Nacionalidade*'
+                  {...register("nacionalidade", { required: "Nacionalidade é obrigatório." })}>
+                  <option value='brasileiro'>Brasileiro</option>
+                  <option value='estrangeiro'>Estrangeiro</option>
+                </Select>
+                <FormErrorMessage>{errors.nacionalidade?.message}</FormErrorMessage>
+              </Flex>
+            </FormControl>
+
           </SimpleGrid>
         </VStack>
 
@@ -538,7 +549,7 @@ export default function Form() {
             <FormControl isInvalid={errors.municipio} >
               <FormLabel htmlFor='municipio'>
                 <Box display='inline-block' mr={3}>
-                  Estado* COMBO BOX
+                  Estado*
                 </Box>
               </FormLabel>
               <ChakraInput bgColor='gray.50'
@@ -547,7 +558,49 @@ export default function Form() {
               <FormErrorMessage>{errors.municipio?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isInvalid={errors.uf} >
+            <FormControl isInvalid={errors.uf}>
+              <Flex direction='column'>
+                <FormLabel htmlFor='municipio'>
+                  <Box display='inline-block' mr={3}>
+                    UF*
+                  </Box>
+                </FormLabel>
+                <Select
+                  placeholder='Estado*'
+                  {...register("uf", { required: "Estado civil é obrigatório." })}>
+                  <option value={'AC'}>AC</option>
+                  <option value={'AL'}>AL</option>
+                  <option value={'AP'}>AP</option>
+                  <option value={'AM'}>AM</option>
+                  <option value={'BA'}>BA</option>
+                  <option value={'CE'}>CE</option>
+                  <option value={'DF'}>DF</option>
+                  <option value={'ES'}>ES</option>
+                  <option value={'GO'}>GO</option>
+                  <option value={'MA'}>MA</option>
+                  <option value={'MT'}>MT</option>
+                  <option value={'MS'}>MS</option>
+                  <option value={'MG'}>MG</option>
+                  <option value={'PA'}>PA</option>
+                  <option value={'PB'}>PB</option>
+                  <option value={'PR'}>PR</option>
+                  <option value={'PE'}>PE</option>
+                  <option value={'PI'}>PI</option>
+                  <option value={'RJ'}>RJ</option>
+                  <option value={'RN'}>RN</option>
+                  <option value={'RS'}>RS</option>
+                  <option value={'RO'}>RO</option>
+                  <option value={'RR'}>RR</option>
+                  <option value={'SC'}>SC</option>
+                  <option value={'SP'}>SP</option>
+                  <option value={'SE'}>SE</option>
+                  <option value={'TO'}>TO</option>
+                </Select>
+                <FormErrorMessage>{errors.uf?.message}</FormErrorMessage>
+              </Flex>
+            </FormControl>
+
+            {/* <FormControl isInvalid={errors.uf} >
               <FormLabel htmlFor='uf'>
                 <Box display='inline-block' mr={3}>
                   UF*
@@ -557,7 +610,7 @@ export default function Form() {
                 {...register("uf", { required: "UF é obrigatório." })}
               />
               <FormErrorMessage>{errors.uf?.message}</FormErrorMessage>
-            </FormControl>
+            </FormControl> */}
           </SimpleGrid>
 
           <Divider my='6' borderColor='blueOficial' />
@@ -582,7 +635,7 @@ export default function Form() {
             <FormControl isInvalid={errors.tempo_reside} >
               <FormLabel htmlFor='tempo_reside'>
                 <Box display='inline-block' mr={3}>
-                  Quanto tempo reside em Anápolis(anos)?*
+                  Quanto tempo(anos) reside em Anápolis?*
                 </Box>
               </FormLabel>
               <ChakraInput bgColor='gray.50' type='number'
@@ -603,7 +656,7 @@ export default function Form() {
                   <PopoverContent>
                     <PopoverArrow />
                     <PopoverCloseButton />
-                    <PopoverBody>Considera-se renda familiar o somatório da renda
+                    <PopoverBody bg='yellow.100'>Considera-se renda familiar o somatório da renda
                       individual dos componentes do mesmo Grupo/Núcleo Familiar.</PopoverBody>
                   </PopoverContent>
                 </Popover>
@@ -647,7 +700,7 @@ export default function Form() {
                     <PopoverContent>
                       <PopoverArrow />
                       <PopoverCloseButton />
-                      <PopoverBody>O Cadastro Único é um conjunto de informações sobre as famílias
+                      <PopoverBody bg='yellow.100'>O Cadastro Único é um conjunto de informações sobre as famílias
                         brasileiras em situação de pobreza e extrema pobreza. O CadÚnico que possibilita o
                         cidadão em participação de programas sociais ex.: Auxilio Brasil (Bolsa Família), Tarifa
                         Social de Energia Elétrica, Isenção em Concurso Público e outros. O CADÚNCO deve
@@ -685,7 +738,7 @@ export default function Form() {
                     <PopoverContent>
                       <PopoverArrow />
                       <PopoverCloseButton />
-                      <PopoverBody>Número de Identificação Social(NIS) é um número de cadastro é
+                      <PopoverBody bg='yellow.100'>Número de Identificação Social(NIS) é um número de cadastro é
                         atribuído apenas para fins de identificação aos cidadãos que tenham ou possam vir a ter
                         direito a benefícios sociais. É gerado um número de NIS para cada pessoa do grupo
                         familiar que esteja inscrito no CADÙNICO esse número é encontrado na folha espelho
@@ -723,7 +776,7 @@ export default function Form() {
                     <PopoverContent>
                       <PopoverArrow />
                       <PopoverCloseButton />
-                      <PopoverBody>Considera-se pessoa com deficiência(PCD) aquela que tem
+                      <PopoverBody bg='yellow.100'>Considera-se pessoa com deficiência(PCD) aquela que tem
                         impedimento de longo prazo de natureza física, mental, intelectual ou
                         sensorial, o qual, em interação com uma ou mais barreiras, pode obstruir
                         sua participação plena e efetiva na sociedade em igualdade de condições
@@ -770,7 +823,7 @@ export default function Form() {
                     <PopoverContent>
                       <PopoverArrow />
                       <PopoverCloseButton />
-                      <PopoverBody>Possuidores ou Proprietário de outro imóvel urbano ou
+                      <PopoverBody bg='yellow.100'>Possuidores ou Proprietário de outro imóvel urbano ou
                         rural nos últimos 12 meses.</PopoverBody>
                     </PopoverContent>
                   </Popover>
@@ -809,7 +862,7 @@ export default function Form() {
                     <PopoverContent>
                       <PopoverArrow />
                       <PopoverCloseButton />
-                      <PopoverBody>O requerente ou algum membro do grupo familiar já
+                      <PopoverBody bg='yellow.100'>O requerente ou algum membro do grupo familiar já
                         recebeu algum imóvel (unidade habitacional) de programas habitacionais.
                         Ex.: Minha Casa Minha Vida.</PopoverBody>
                     </PopoverContent>
@@ -851,7 +904,7 @@ export default function Form() {
                     <PopoverContent>
                       <PopoverArrow />
                       <PopoverCloseButton />
-                      <PopoverBody>O requerente ou algum membro do grupo familiar possui
+                      <PopoverBody bg='yellow.100'>O requerente ou algum membro do grupo familiar possui
                         algum imóvel residencial financiado no âmbito do Sistema Financeiro de
                         Habitação.</PopoverBody>
                     </PopoverContent>
@@ -892,7 +945,7 @@ export default function Form() {
                     <PopoverContent>
                       <PopoverArrow />
                       <PopoverCloseButton />
-                      <PopoverBody>Mulher que é a principal fonte de renda da família</PopoverBody>
+                      <PopoverBody bg='yellow.100'>Mulher que é a principal fonte de renda da família</PopoverBody>
                     </PopoverContent>
                   </Popover>
                 </FormLabel>
@@ -930,7 +983,7 @@ export default function Form() {
                     <PopoverContent>
                       <PopoverArrow />
                       <PopoverCloseButton />
-                      <PopoverBody>De acordo com art. 5º da Lei Maria da Penha, violência doméstica e
+                      <PopoverBody bg='yellow.100'>De acordo com art. 5º da Lei Maria da Penha, violência doméstica e
                         familiar contra a mulher é” qualquer ação ou missão baseada no gênero que cause
                         morte, lesão, sofrimento físico, sexual ou psicológico e dano moral ou patrimonial”. Serão
                         exigidos os seguintes documentos comprobatórios de violência doméstica: Cópia de
@@ -954,19 +1007,70 @@ export default function Form() {
             </SimpleGrid>
           </FormControl>
 
-
-
-
-          <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
-            <Select
-              placeholder='Quantidade de Pessoas no Grupo Familiar?*'
-              {...register("gf_quantidade")}
+          <FormControl isInvalid={errors.grupo_familiar}>
+            <SimpleGrid
+              minChildWidth='240px'
+              spacing='4' w='100%'
+              sx={{ display: 'flex', justifyContent: 'flex-start' }}
             >
-              <option value={2}>2</option>
-              <option value={3}>3</option>
 
-            </Select>
-          </SimpleGrid>
+              <Flex direction='column'>
+                <FormLabel htmlFor='grupo_familiar'>
+                  <Box display='inline-block' mr={3}>
+                    O grupo familiar possui mais de um integrante?*
+                  </Box>
+                  <Popover>
+                    <PopoverTrigger>
+                      <IconButton aria-label='' size='xs' icon={<QuestionOutlineIcon />} />
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverArrow />
+                      <PopoverCloseButton />
+                      <PopoverBody bg='yellow.100'>O grupo familiar será composto pelo requerente, o cônjuge ou
+                        companheiro, os pais e, na ausência de um deles, a madrasta ou o padrasto, os irmãos
+                        solteiros, os filhos e enteados solteiros e os menores tutelados, desde que vivam sob o
+                        mesmo teto.</PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                </FormLabel>
+
+                <RadioGroup name='grupo_familiar'>
+                  <HStack spacing='24px'>
+                    <Radio value='sim' type="radio"
+                      {...register("grupo_familiar", { required: 'Campo obrigatório' })}>Sim</Radio>
+                    <Radio value='nao' type="radio"
+                      {...register("grupo_familiar", { required: 'Campo obrigatório' })}>Não</Radio>
+                  </HStack>
+                </RadioGroup>
+                <FormErrorMessage>{errors.grupo_familiar?.message}</FormErrorMessage>
+              </Flex>
+
+            </SimpleGrid>
+          </FormControl>
+
+
+
+          {wathGrupoFamiliar == 'sim' &&
+
+            <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
+              <FormControl isInvalid={errors.gf_quantidade}>
+                <FormLabel htmlFor='gf_quantidade'>
+                  <Box display='inline-block' mr={3}>
+                    Quantidade de Pessoas no Grupo Familiar?*
+                  </Box>
+                </FormLabel>
+                <Flex>
+                  <NumberInput size='lg' maxW={32} defaultValue={2} min={2}>
+                    <NumberInputField {...register("gf_quantidade")} />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                </Flex>
+              </FormControl>
+            </SimpleGrid>
+          }
 
           {/* <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
 
@@ -984,34 +1088,32 @@ export default function Form() {
 
           {wathGfQuantidade && inputArray}
 
-          <Checkbox>Declaro para todos os fins que, todas as informações aqui
-            prestadas são verdadeiras e estão corretas, sob pena do art. 297 do Código Penal Brasileiro.</Checkbox>
+          <Box mt={8}>
+            <Checkbox size='md' onChange={() => setSwitchOpen(!switchOpen)}>Declaro para todos os fins que, todas as informações aqui
+              prestadas são verdadeiras e estão corretas, sob pena do art. 297 do Código Penal Brasileiro.</Checkbox>
+          </Box>
 
-          <Button
-            type='submit'
-            isLoading={formState.isSubmitting}
-            mb="16px"
-            bg='yellowOficial'
-            color='text'
-            fontSize="xs"
-            variant="no-effects"
-            px="30px"
-          >
-            Cadastrar
-          </Button>
+          {switchOpen ? (
+            <Button
+              type='submit'
+              isLoading={formState.isSubmitting}
+              mb="16px"
+              bg='yellowOficial'
+              color='text'
+              fontSize="xs"
+              variant="no-effects"
+              px="30px"
+            >
+              Cadastrar
+            </Button>
+          ) : ''}
 
           <Text as='li'>O grupo familiar será composto pelo requerente, o cônjuge ou
             companheiro, os pais e, na ausência de um deles, a madrasta ou o padrasto, os irmãos
             solteiros, os filhos e enteados solteiros e os menores tutelados, desde que vivam sob o
             mesmo teto.</Text>
-          <Text as='li'>estado civil</Text>
-          <Text as='li'>nacionalidade</Text>
-          <Text as='li'>combo box do estado</Text>
           <Text as='li'>Quanto tempo reside em Anápolis(anos)?*</Text>
-          <Text as='li'>chequebox declaro por veracidade os dados fornecidos</Text>
-          {/* <Text as='li'>combo box do estado</Text>
-          {/* <Text as='li'>combo box do estado</Text>
-          <Text as='li'>combo box do estado</Text> */}
+
 
 
         </VStack>
