@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -21,32 +22,69 @@ import {
   PopoverContent,
   PopoverArrow,
   PopoverCloseButton,
-  PopoverHeader,
   PopoverBody,
   FormErrorMessage,
   Checkbox,
-  Tooltip,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper
+  useDisclosure
 } from "@chakra-ui/react";
-import { Controller, useForm } from 'react-hook-form'
-import * as yup from "yup";
-import { yupResolver } from '@hookform/resolvers/yup';
-
-import { Input } from "../components/Form/Input";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { getCepAddress, postRegister, registerUser, selectRegister } from "../components/features/register/registerSlice";
-import { useEffect, useState } from "react";
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import NumberFormat from "react-number-format";
 import { useRouter } from "next/router";
-import protocolo from "./protocolo";
-import { MaskedInput } from "../components/Form/MaskedInput";
-import { QuestionOutlineIcon } from "@chakra-ui/icons";
+import { CheckIcon, Icon, QuestionOutlineIcon } from "@chakra-ui/icons";
 import { cpf } from 'cpf-cnpj-validator';
-import { info } from "console";
+import { AiFillEdit, AiTwotoneLock } from "react-icons/ai";
+import { BsBoxArrowUpRight, BsFillTrashFill } from "react-icons/bs";
+
+import {
+  getCepAddress,
+  postRegister,
+  registerUser,
+  selectRegister
+} from "../components/Features/register/registerSlice";
+import { ModalGrupoFamiliar } from "../components/Modal/ModalGrupoFamiliar";
+import { Stack } from "@chakra-ui/react";
+import { useColorModeValue } from "@chakra-ui/react";
+import { chakra } from "@chakra-ui/react";
+import { ButtonGroup } from "@chakra-ui/react";
+import { List } from "@chakra-ui/react";
+import { ListItem } from "@chakra-ui/react";
+import { ListIcon } from "@chakra-ui/react";
+import { Grid } from "@chakra-ui/react";
+
+interface RegisterForm {
+  nome: string;
+  email: string;
+  cpf: string;
+  rg: string;
+  uf_rg: string;
+  dt_nascimento: string;
+  fone_celular: string;
+  fone_fixo: string
+  sexo: string
+  portador_pcd: string
+  estado_civil: string
+  nacionalidade: string
+  cep: string
+  logradouro: string
+  quadra: string
+  lote: string
+  Complemento: string
+  bairro: string
+  municipio: string
+  uf: string
+  tempo_reside: string
+  renda_bruta: string
+  cadunico: string
+  numero_cadunico: string
+  pcd: string
+  possui_imovel: string
+  contemplado_habitacional: string
+  comprador_imovel: string
+  arrimo_familia: string
+  vitima_violencia: string
+  grupo_familiar: string
+}
 
 export default function Form() {
   const {
@@ -57,13 +95,17 @@ export default function Form() {
     watch,
     formState,
     formState: { errors }
-  } = useForm({})
+  } = useForm<RegisterForm>()
 
   const { register: registro } = useAppSelector(selectRegister);
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const [switchOpen, setSwitchOpen] = useState(false)
   const dispatch = useAppDispatch();
   const router = useRouter();
   const toast = useToast();
+
+  const wathGrupoFamiliar = watch('grupo_familiar')
+  const wathCadunico = watch('cadunico')
 
   useEffect(() => {
     if (registro?.logradouro) {
@@ -81,12 +123,7 @@ export default function Form() {
     }
   }
 
-  const wathGrupoFamiliar = watch('grupo_familiar')
-  const wathCadunico = watch('cadunico')
-  const wathGfQuantidade = watch('gf_quantidade')
-  const wathGfCpfCertidao = watch('gf_cpf_certidao')
-
-  const onSubmit = data => {
+  const onSubmit: SubmitHandler<RegisterForm> = data => {
     console.log(data)
     data.dt_nascimento = data.dt_nascimento.split('/').reverse().join('-');
 
@@ -108,85 +145,93 @@ export default function Form() {
       });
   }
 
-  // let inputArray = []
-  // {
-  //   for (var i = 0; i <= wathGfQuantidade - 1; i++) {
-  //     inputArray.push((
-  //       <Flex key={wathGfQuantidade + i} direction='column' w='100%'>
-  //         <Divider mt='4rem' mb='6' borderColor='blueOficial' />
-  //         <Heading
+  const data = [
+    {
+      integrante: '1',
+      gf_nome: "Adriano barbosa dos santos",
+      gf_dt_nascimento: "27/12/1987",
+      gf_cpf: "024.204.791-22",
+      gf_rg_certidao: "2429477",
+      gf_renda_bruta: "R$ 1100,00",
+      gf_pcd: "não",
+      gf_parentesco: "Tio/Tia",
+    },
+    {
+      integrante: '2',
+      gf_nome: "Thais lacerda de brito",
+      gf_dt_nascimento: "27/12/1992",
+      gf_cpf: "034.546.567-77",
+      gf_rg_certidao: "34565346",
+      gf_renda_bruta: "R$ 2200,00",
+      gf_pcd: "não",
+      gf_parentesco: "Padrasto/Madrasta",
+    },
+    {
+      integrante: '3',
+      gf_nome: "Thais lacerda de brito",
+      gf_dt_nascimento: "27/12/1992",
+      gf_cpf: "034.546.567-77",
+      gf_rg_certidao: "34565346",
+      gf_renda_bruta: "R$ 2200,00",
+      gf_pcd: "não",
+      gf_parentesco: "Padrasto/Madrasta",
+    },
+    {
+      integrante: '4',
+      gf_nome: "Thais lacerda de brito",
+      gf_dt_nascimento: "27/12/1992",
+      gf_cpf: "034.546.567-77",
+      gf_rg_certidao: "34565346",
+      gf_renda_bruta: "R$ 2200,00",
+      gf_pcd: "não",
+      gf_parentesco: "Padrasto/Madrasta",
+    },
+    {
+      integrante: '5',
+      gf_nome: "Thais lacerda de brito",
+      gf_dt_nascimento: "27/12/1992",
+      gf_cpf: "034.546.567-77",
+      gf_rg_certidao: "34565346",
+      gf_renda_bruta: "R$ 2200,00",
+      gf_pcd: "não",
+      gf_parentesco: "Padrasto/Madrasta",
+    },
+    {
+      integrante: '6',
+      gf_nome: "Thais lacerda de brito",
+      gf_dt_nascimento: "27/12/1992",
+      gf_cpf: "034.546.567-77",
+      gf_rg_certidao: "34565346",
+      gf_renda_bruta: "R$ 2200,00",
+      gf_pcd: "não",
+      gf_parentesco: "Padrasto/Madrasta",
+    },
+    {
+      integrante: '7',
+      gf_nome: "henry barbosa lacerda",
+      gf_dt_nascimento: "27/12/1992",
+      gf_cpf: "123.123.123-12",
+      gf_rg_certidao: "657576856",
+      gf_renda_bruta: "R$ 100,00",
+      gf_pcd: "sim",
+      gf_parentesco: "Filho/Filha",
+    },
+    {
+      integrante: '8',
+      gf_nome: "Junior da silva sauro",
+      gf_dt_nascimento: "27/12/2000",
+      gf_cpf: "024.204.791-32",
+      gf_rg_certidao: "23423",
+      gf_renda_bruta: "R$ 1100,00",
+      gf_pcd: "não",
+      gf_parentesco: "Tutor(a), Tutelado(a) ou Curador(a) e Curatelado(a)",
+    },
 
-  //           fontWeight='bold'
-  //           color='text'
-  //           size='md'
-  //           textAlign='center'
-  //           mb='2rem'
-  //         >
-  //           Pessoa {i + 1}
-  //         </Heading>
-  //         <SimpleGrid minChildWidth='300px' spacing='4' w='100%'>
+  ];
 
-  //           <Flex direction='column' mt='2rem'>
-  //             <Select
-  //               placeholder='CPF ou Certidão de nascimento'
-  //               {...register("gf_cpf_certidao")}>
-  //               <option value='cpf'>1. CPF</option>
-  //               <option value='certidao'>2. Certidão de nascimento</option>
-
-  //             </Select>
-  //             <Text as='p' mt='1' color='#e53e3e' fontSize='14px'>{errors.gf_cpf_certidao?.message}</Text>
-  //           </Flex>
-
-  //           {wathGfCpfCertidao == 'cpf' &&
-  //             <Controller
-  //               name="gf_cpf"
-  //               defaultValue=''
-  //               control={control}
-  //               render={({ field }) =>
-  //                 <MaskedInput
-  //                   {...field}
-  //                   error={errors.gf_cpf}
-  //                   label='CPF'
-  //                   mask="###.###.###-##"
-  //                 />}
-  //             />
-  //           }
-
-  //           {wathGfCpfCertidao == 'certidao' &&
-  //             <Input
-  //               error={errors.gf_certidao}
-  //               label='Certidão de nascimento*'
-  //               {...register("gf_certidao")}
-  //             />
-  //           }
-
-  //           <Input
-  //             error={errors.gf_nome}
-  //             label='Nome completo*'
-  //             {...register("gf_nome")} />
-
-
-  //           <Controller
-  //             name="gf_dt_nascimento"
-  //             defaultValue=''
-  //             control={control}
-  //             render={({ field }) => <MaskedInput
-  //               {...field}
-  //               error={errors.gf_dt_nascimento}
-  //               label='Data de nascimento*'
-  //               mask="##/##/####"
-  //             />}
-  //           />
-
-  //           <Input
-  //             error={errors.gf_grau_parentesco}
-  //             label='Grau de parentesco*'
-  //             {...register("gf_grau_parentesco")} />
-  //         </SimpleGrid>
-  //       </Flex>)
-  //     )
-  //   }
-  // }
+  const bg = useColorModeValue("white", "gray.800");
+  const bg2 = useColorModeValue("white", "gray.800");
+  const bg3 = useColorModeValue("gray.100", "gray.700");
 
   return (
     <Flex
@@ -220,17 +265,8 @@ export default function Form() {
         </Heading>
 
 
-        <VStack spacing='4'>
-
+        <VStack spacing={4}>
           <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
-            {/* <Input
-              error={errors.nome}
-              explication={true}
-              popHeader='nome'
-              popBody='teste'
-              label='Nome Completo*'
-              {...register("nome", { required: "Nome é obrigatório." })}
-            /> */}
             <FormControl isInvalid={errors.nome} >
               <FormLabel htmlFor='nome'>
                 <Box display='inline-block' mr={3}>
@@ -393,7 +429,7 @@ export default function Form() {
             <FormControl isInvalid={errors.sexo}>
 
               <Flex direction='column'>
-                <FormLabel as='legend'>Sexo<Text as='span' color='red'>*</Text></FormLabel>
+                <FormLabel as='legend'>Sexo*</FormLabel>
                 <RadioGroup name='sexo'>
                   <HStack spacing='24px'>
                     <Radio value='masculino' type="radio"
@@ -405,6 +441,27 @@ export default function Form() {
                 <FormErrorMessage>{errors.sexo?.message}</FormErrorMessage>
               </Flex>
 
+            </FormControl>
+          </SimpleGrid>
+
+          <SimpleGrid
+            minChildWidth='240px'
+            spacing='4' w='100%'
+            sx={{ display: 'flex', justifyContent: 'flex-start' }}
+          >
+            <FormControl isInvalid={errors.portador_pcd}>
+              <Flex direction='column'>
+                <FormLabel as='legend'>Portador de deficiência?*</FormLabel>
+                <RadioGroup name='portador_pcd'>
+                  <HStack spacing='24px'>
+                    <Radio value='sim' type="radio"
+                      {...register("portador_pcd", { required: 'O campo portador de deficiência é obrigatório' })}>Sim</Radio>
+                    <Radio value='nao' type="radio"
+                      {...register("portador_pcd", { required: 'O campo portador de deficiência é obrigatório' })}>Não</Radio>
+                  </HStack>
+                </RadioGroup>
+                <FormErrorMessage>{errors.portador_pcd?.message}</FormErrorMessage>
+              </Flex>
             </FormControl>
           </SimpleGrid>
 
@@ -599,18 +656,6 @@ export default function Form() {
                 <FormErrorMessage>{errors.uf?.message}</FormErrorMessage>
               </Flex>
             </FormControl>
-
-            {/* <FormControl isInvalid={errors.uf} >
-              <FormLabel htmlFor='uf'>
-                <Box display='inline-block' mr={3}>
-                  UF*
-                </Box>
-              </FormLabel>
-              <ChakraInput bgColor='gray.50'
-                {...register("uf", { required: "UF é obrigatório." })}
-              />
-              <FormErrorMessage>{errors.uf?.message}</FormErrorMessage>
-            </FormControl> */}
           </SimpleGrid>
 
           <Divider my='6' borderColor='blueOficial' />
@@ -626,7 +671,7 @@ export default function Form() {
           </Heading>
 
           <Flex>
-            <Text mr={2}>Para mais informações dos dados abaixo clique no icone de correspondente ao seu campo</Text>
+            <Text mr={2}>Para mais informações dos dados abaixo clique no icone de ajuda correspondente ao seu campo</Text>
             <IconButton aria-label='' size='xs' icon={<QuestionOutlineIcon />} />
           </Flex>
 
@@ -647,7 +692,7 @@ export default function Form() {
             <FormControl isInvalid={errors.renda_bruta}>
               <FormLabel htmlFor='renda_bruta'>
                 <Box display='inline-block' mr={3}>
-                  Renda bruta familiar
+                  Renda bruta
                 </Box>
                 <Popover>
                   <PopoverTrigger>
@@ -1007,6 +1052,8 @@ export default function Form() {
             </SimpleGrid>
           </FormControl>
 
+          <Divider my='6' borderColor='blueOficial' />
+
           <FormControl isInvalid={errors.grupo_familiar}>
             <SimpleGrid
               minChildWidth='240px'
@@ -1048,45 +1095,122 @@ export default function Form() {
             </SimpleGrid>
           </FormControl>
 
-
-
           {wathGrupoFamiliar == 'sim' &&
 
-            <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
-              <FormControl isInvalid={errors.gf_quantidade}>
-                <FormLabel htmlFor='gf_quantidade'>
-                  <Box display='inline-block' mr={3}>
-                    Quantidade de Pessoas no Grupo Familiar?*
-                  </Box>
-                </FormLabel>
-                <Flex>
-                  <NumberInput size='lg' maxW={32} defaultValue={2} min={2}>
-                    <NumberInputField {...register("gf_quantidade")} />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
-                </Flex>
-              </FormControl>
-            </SimpleGrid>
+            <>
+              <Flex>
+                <Button
+                  ml={4}
+                  colorScheme='blue'
+                  onClick={onOpen}
+                >
+                  + Adicionar integrante ao grupo familiar
+                </Button>
+              </Flex>
+              <ModalGrupoFamiliar
+                isOpen={isOpen}
+                onClose={onClose}
+                errors={errors}
+                register={register}
+                control={control}
+              />
+
+              <Flex justify='center' >
+                <Grid templateColumns={{ base: 'repeat(1, 3fr)', md: 'repeat(4, 2fr)' }} gap={6} maxWidth='1030px'>
+
+
+                  {data.map((item, intex) => {
+                    return (
+
+                      <Flex
+                        maxW={{ base: '330px', md: '230px' }}
+                        bg='gray.800'
+                        borderWidth="1px"
+                        rounded="lg"
+                        shadow="lg"
+                        textAlign='center'
+                      >
+
+
+                        <Box w='100%' h='100%' bg={useColorModeValue('gray.50', 'gray.900')} px={2} py={10}
+                          fontSize={'sm'}>
+                          <Heading as='h6' size='xs' mb={4} color={'blue.500'}>
+                            Integrante {item.integrante}
+                          </Heading>
+                          <List spacing={3}>
+                            <ListItem >
+                              <Heading as='h6' size='xs'>
+                                Nome:
+                              </Heading>
+                              {item.gf_nome}
+                            </ListItem>
+                            <ListItem>
+                              <Heading as='h6' size='xs'>
+                                Data de nascimento:
+                              </Heading>
+                              {item.gf_dt_nascimento}
+                            </ListItem>
+                            <ListItem>
+                              <Heading as='h6' size='xs'>
+                                CPF:
+                              </Heading>
+                              {item.gf_cpf}
+                            </ListItem>
+                            <ListItem>
+                              <Heading as='h6' size='xs'>
+                                RG/ Certidão:
+                              </Heading>
+                              {item.gf_rg_certidao}
+                            </ListItem>
+                            <ListItem>
+                              <Heading as='h6' size='xs'>
+                                Renda bruta:
+                              </Heading>
+                              {item.gf_renda_bruta}
+                            </ListItem>
+                            <ListItem>
+                              <Heading as='h6' size='xs'>
+                                PCD:
+                              </Heading>
+                              {item.gf_pcd}
+                            </ListItem>
+                            <ListItem>
+                              <Heading as='h6' size='xs'>
+                                Parentesco:
+                              </Heading>
+                              {item.gf_parentesco}
+                            </ListItem>
+                          </List>
+
+
+                          <Flex justify='center' mt={8}>
+                            <ButtonGroup variant="solid" size="sm" spacing={3}>
+
+                              <IconButton
+                                colorScheme="blue"
+                                icon={<AiFillEdit />}
+                                aria-label="Edit"
+                              />
+                              <IconButton
+                                colorScheme="red"
+                                icon={<BsFillTrashFill />}
+                                aria-label="Delete"
+                              />
+                            </ButtonGroup>
+                          </Flex>
+                        </Box>
+                      </Flex>
+                    )
+                  })}
+                </Grid >
+
+              </Flex>
+
+            </>
           }
 
-          {/* <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
 
-            <Select
-              placeholder='Número de pessoas no Grupo familiar?*'
-              {...register("grupo_familiar")}
-            >
-              <option value={0}>Não possui grupo familiar</option>
-              <option value={1}>1</option>
-              <option value={2}>2</option>
-              <option value={3}>3</option>
-
-            </Select>
-          </SimpleGrid> */}
-
-          {wathGfQuantidade && inputArray}
+          <Divider my={6} py={6} borderColor='blueOficial' />
 
           <Box mt={8}>
             <Checkbox size='md' onChange={() => setSwitchOpen(!switchOpen)}>Declaro para todos os fins que, todas as informações aqui
@@ -1108,18 +1232,7 @@ export default function Form() {
             </Button>
           ) : ''}
 
-          <Text as='li'>O grupo familiar será composto pelo requerente, o cônjuge ou
-            companheiro, os pais e, na ausência de um deles, a madrasta ou o padrasto, os irmãos
-            solteiros, os filhos e enteados solteiros e os menores tutelados, desde que vivam sob o
-            mesmo teto.</Text>
-          <Text as='li'>Quanto tempo reside em Anápolis(anos)?*</Text>
-
-
-
         </VStack>
-
-
-
       </Box>
     </Flex>
   )
