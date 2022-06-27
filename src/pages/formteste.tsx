@@ -37,7 +37,6 @@ export default function formteste() {
 
   console.log(errors)
   const onSubmit = data => {
-    console.log(data)
     toast({
       position: 'top',
       title: "Ocorreu um erro.",

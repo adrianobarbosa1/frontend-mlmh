@@ -41,7 +41,7 @@ import {
   postRegister,
   registerUser,
   selectRegister
-} from "../components/Features/register/registerSlice";
+} from "../features/register/registerSlice";
 import { ModalGrupoFamiliar } from "../components/Modal/ModalGrupoFamiliar";
 import { Stack } from "@chakra-ui/react";
 import { useColorModeValue } from "@chakra-ui/react";
@@ -97,7 +97,7 @@ export default function Form() {
     formState: { errors }
   } = useForm<RegisterForm>()
 
-  const { register: registro } = useAppSelector(selectRegister);
+  const { register: registro, integrantes } = useAppSelector(selectRegister);
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [switchOpen, setSwitchOpen] = useState(false)
   const dispatch = useAppDispatch();
@@ -124,7 +124,6 @@ export default function Form() {
   }
 
   const onSubmit: SubmitHandler<RegisterForm> = data => {
-    console.log(data)
     data.dt_nascimento = data.dt_nascimento.split('/').reverse().join('-');
 
     dispatch(postRegister(data))
@@ -144,90 +143,6 @@ export default function Form() {
         })
       });
   }
-
-  const data = [
-    {
-      integrante: '1',
-      gf_nome: "Adriano barbosa dos santos",
-      gf_dt_nascimento: "27/12/1987",
-      gf_cpf: "024.204.791-22",
-      gf_rg_certidao: "2429477",
-      gf_renda_bruta: "R$ 1100,00",
-      gf_pcd: "não",
-      gf_parentesco: "Tio/Tia",
-    },
-    {
-      integrante: '2',
-      gf_nome: "Thais lacerda de brito",
-      gf_dt_nascimento: "27/12/1992",
-      gf_cpf: "034.546.567-77",
-      gf_rg_certidao: "34565346",
-      gf_renda_bruta: "R$ 2200,00",
-      gf_pcd: "não",
-      gf_parentesco: "Padrasto/Madrasta",
-    },
-    {
-      integrante: '3',
-      gf_nome: "Thais lacerda de brito",
-      gf_dt_nascimento: "27/12/1992",
-      gf_cpf: "034.546.567-77",
-      gf_rg_certidao: "34565346",
-      gf_renda_bruta: "R$ 2200,00",
-      gf_pcd: "não",
-      gf_parentesco: "Padrasto/Madrasta",
-    },
-    {
-      integrante: '4',
-      gf_nome: "Thais lacerda de brito",
-      gf_dt_nascimento: "27/12/1992",
-      gf_cpf: "034.546.567-77",
-      gf_rg_certidao: "34565346",
-      gf_renda_bruta: "R$ 2200,00",
-      gf_pcd: "não",
-      gf_parentesco: "Padrasto/Madrasta",
-    },
-    {
-      integrante: '5',
-      gf_nome: "Thais lacerda de brito",
-      gf_dt_nascimento: "27/12/1992",
-      gf_cpf: "034.546.567-77",
-      gf_rg_certidao: "34565346",
-      gf_renda_bruta: "R$ 2200,00",
-      gf_pcd: "não",
-      gf_parentesco: "Padrasto/Madrasta",
-    },
-    {
-      integrante: '6',
-      gf_nome: "Thais lacerda de brito",
-      gf_dt_nascimento: "27/12/1992",
-      gf_cpf: "034.546.567-77",
-      gf_rg_certidao: "34565346",
-      gf_renda_bruta: "R$ 2200,00",
-      gf_pcd: "não",
-      gf_parentesco: "Padrasto/Madrasta",
-    },
-    {
-      integrante: '7',
-      gf_nome: "henry barbosa lacerda",
-      gf_dt_nascimento: "27/12/1992",
-      gf_cpf: "123.123.123-12",
-      gf_rg_certidao: "657576856",
-      gf_renda_bruta: "R$ 100,00",
-      gf_pcd: "sim",
-      gf_parentesco: "Filho/Filha",
-    },
-    {
-      integrante: '8',
-      gf_nome: "Junior da silva sauro",
-      gf_dt_nascimento: "27/12/2000",
-      gf_cpf: "024.204.791-32",
-      gf_rg_certidao: "23423",
-      gf_renda_bruta: "R$ 1100,00",
-      gf_pcd: "não",
-      gf_parentesco: "Tutor(a), Tutelado(a) ou Curador(a) e Curatelado(a)",
-    },
-
-  ];
 
   const bg = useColorModeValue("white", "gray.800");
   const bg2 = useColorModeValue("white", "gray.800");
@@ -1107,22 +1022,20 @@ export default function Form() {
                   + Adicionar integrante ao grupo familiar
                 </Button>
               </Flex>
+
               <ModalGrupoFamiliar
                 isOpen={isOpen}
                 onClose={onClose}
-                errors={errors}
-                register={register}
-                control={control}
               />
 
               <Flex justify='center' >
                 <Grid templateColumns={{ base: 'repeat(1, 3fr)', md: 'repeat(4, 2fr)' }} gap={6} maxWidth='1030px'>
 
 
-                  {data.map((item, intex) => {
+                  {integrantes.map((item, index) => {
                     return (
 
-                      <Flex
+                      <Flex key={index}
                         maxW={{ base: '330px', md: '230px' }}
                         bg='gray.800'
                         borderWidth="1px"
@@ -1150,18 +1063,26 @@ export default function Form() {
                               </Heading>
                               {item.gf_dt_nascimento}
                             </ListItem>
-                            <ListItem>
-                              <Heading as='h6' size='xs'>
-                                CPF:
-                              </Heading>
-                              {item.gf_cpf}
-                            </ListItem>
-                            <ListItem>
-                              <Heading as='h6' size='xs'>
-                                RG/ Certidão:
-                              </Heading>
-                              {item.gf_rg_certidao}
-                            </ListItem>
+
+                            {item.gf_cpf !== undefined &&
+                              <ListItem>
+                                <Heading as='h6' size='xs'>
+                                  CPF:
+                                </Heading>
+                                {item.gf_cpf}
+                              </ListItem>
+                            }
+
+                            {item.gf_rg_certidao !== undefined &&
+
+                              <ListItem>
+                                <Heading as='h6' size='xs'>
+                                  RG/ Certidão:
+                                </Heading>
+                                {item.gf_rg_certidao}
+                              </ListItem>
+                            }
+
                             <ListItem>
                               <Heading as='h6' size='xs'>
                                 Renda bruta:
@@ -1190,11 +1111,13 @@ export default function Form() {
                                 colorScheme="blue"
                                 icon={<AiFillEdit />}
                                 aria-label="Edit"
+                              // onClick={ }
                               />
                               <IconButton
                                 colorScheme="red"
                                 icon={<BsFillTrashFill />}
                                 aria-label="Delete"
+                              // onClick={ }
                               />
                             </ButtonGroup>
                           </Flex>

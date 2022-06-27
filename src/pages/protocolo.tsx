@@ -3,7 +3,7 @@ import { Box, Divider, Flex, Heading, Icon } from '@chakra-ui/react'
 import animationData from '../../public/img/success.json'
 import Lottie from 'react-lottie';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { postRegister, selectRegister } from '../components/features/register/registerSlice';
+import { postRegister, selectRegister } from '../features/register/registerSlice';
 
 export default function Protocolo() {
     const [animation, setAnimation] = useState({

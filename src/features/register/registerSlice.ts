@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { AppState } from "../../../app/store";
-import { cepAddress, registerCreate } from "./registerAPI";
+import { string } from "yup";
+import { AppState } from "../../app/store";
+import { cepAddress, existeCpf, registerCreate } from "./registerAPI";
 
 export interface Register {
     nome: string;
@@ -24,9 +25,21 @@ export interface Register {
     protocolo: string;
 }
 
+interface Integrante {
+    integrante: string;
+    gf_nome: string;
+    gf_dt_nascimento: string;
+    gf_cpf: string;
+    gf_rg_certidao: string;
+    gf_renda_bruta: string;
+    gf_pcd: string;
+    gf_parentesco: string;
+}
+
 export interface RegisterState {
     register: Register;
-
+    cpfExiste: boolean;
+    integrantes: Integrante[]
     status: "idle" | "loading" | "failed";
 }
 
@@ -52,6 +65,8 @@ const initialState: RegisterState = {
         uf_rg: "",
         protocolo: "",
     },
+    cpfExiste: false,
+    integrantes: [],
     status: "idle",
 };
 
@@ -71,6 +86,15 @@ export const postRegister = createAsyncThunk(
     }
 );
 
+export const postExistCpf = createAsyncThunk(
+    'register/postExistCpf',
+    async (cpf) => {
+        const response = await existeCpf(cpf)
+        // The value we return becomes the `fulfilled` action payload
+        return response
+    }
+)
+
 export const registerSlice = createSlice({
     name: 'register',
     initialState,
@@ -78,6 +102,11 @@ export const registerSlice = createSlice({
         registerUser: (state, action) => {
             state.register = action.payload
         },
+        addIntegrante: (state, action) => {
+            const integrante = action.payload
+            integrante.integrante = state.integrantes.length + 1
+            state.integrantes.push(integrante)
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -95,10 +124,17 @@ export const registerSlice = createSlice({
                 state.status = "idle";
                 state.register = action.payload;
             })
+            .addCase(postExistCpf.pending, (state) => {
+                state.status = "loading";
+            })
+            .addCase(postExistCpf.fulfilled, (state, action) => {
+                state.status = "idle";
+                state.cpfExiste = action.payload;
+            })
     },
 })
 
-export const { registerUser } = registerSlice.actions;
+export const { registerUser, addIntegrante } = registerSlice.actions;
 
 export const selectRegister = (state: AppState) => state.register;
 

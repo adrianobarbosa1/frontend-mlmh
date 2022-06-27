@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { useAppDispatch, useAppSelector } from '../app/hooks'
-import registerSlice, { postRegister, selectRegister } from '../components/features/register/registerSlice'
+import registerSlice, { postRegister, selectRegister } from '../features/register/registerSlice'
 
 export default function resume() {
   const { handleSubmit } = useForm()
@@ -17,7 +17,6 @@ export default function resume() {
   }
 
   const onSubmit = (data) => {
-    console.log(data)
     dispatch(postRegister(data))
       .unwrap()
       .then((result) => {

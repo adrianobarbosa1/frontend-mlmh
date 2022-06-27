@@ -1,5 +1,5 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
-import registerReducer from "../components/features/register/registerSlice";
+import registerReducer from "../features/register/registerSlice";
 
 
 export function makeStore() {
