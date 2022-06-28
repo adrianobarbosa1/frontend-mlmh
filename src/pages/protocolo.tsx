@@ -48,6 +48,19 @@ export default function Protocolo() {
                 >
                     Cadastro realizado com sucesso!
                 </Heading>
+                <Heading
+                    fontWeight='bold'
+                    color='text'
+                    size='md'
+                    textAlign='center'
+                    mb='2rem'
+                    color='red'
+                >
+                    ATENÇÂO! Anote o número do seu protocolo.
+                    Caso queira, realizar alguma alteração em seu cadastro
+                    será necessario a ultilização do mesmo.
+                    Informamos ainda que, o número de protocolo é pessoal e intransferível!
+                </Heading>
                 <Flex as='figure' justify='center'>
                     {/* <Box w='200px'>
                         <Image src={icon} alt='success' />

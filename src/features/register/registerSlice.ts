@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { string } from "yup";
 import { AppState } from "../../app/store";
 import { cepAddress, existeCpf, registerCreate } from "./registerAPI";
@@ -106,8 +106,13 @@ export const registerSlice = createSlice({
             const integrante = action.payload
             integrante.integrante = state.integrantes.length + 1
             state.integrantes.push(integrante)
-        }
+        },
+        removeIntegrante: (state: RegisterState, action: PayloadAction<string>) => {
+            const integranteIndex = state.integrantes.map((e) => e.integrante).indexOf(action.payload);
+            state.integrantes.splice(integranteIndex, 1);
+        },
     },
+
     extraReducers: (builder) => {
         builder
             .addCase(getCepAddress.pending, (state) => {
@@ -134,7 +139,7 @@ export const registerSlice = createSlice({
     },
 })
 
-export const { registerUser, addIntegrante } = registerSlice.actions;
+export const { registerUser, addIntegrante, removeIntegrante } = registerSlice.actions;
 
 export const selectRegister = (state: AppState) => state.register;
 

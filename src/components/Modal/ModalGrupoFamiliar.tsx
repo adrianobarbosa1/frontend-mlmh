@@ -36,12 +36,9 @@ import { dispatch } from "react-hot-toast/dist/core/store";
 import { addIntegrante, postExistCpf } from "../../features/register/registerSlice";
 import { useAppDispatch } from "../../app/hooks";
 
-interface ModalProps<TFieldValues extends FieldValues = FieldValues, TContext = any> {
+interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
-    errors: FieldErrors<TFieldValues>;
-    register: UseFormRegister<TFieldValues>;
-    control: Control<TFieldValues, TContext>;
 }
 
 type VerifyErrors = {
@@ -49,7 +46,6 @@ type VerifyErrors = {
     nascimento: string;
     gfCpf: string;
     rgCertidao: string;
-    rendaBruta: string;
     pcd: string;
     parentesco: string;
     maiorDezoito: string;
@@ -61,7 +57,6 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
     const [nascimento, setNascimento] = useState('')
     const [gfCpf, setGfCpf] = useState('')
     const [rgCertidao, setRgCertidao] = useState('')
-    const [rendaBruta, setRendaBruta] = useState('')
     const [pcd, setPcd] = useState('')
     const [parentesco, setParentesco] = useState('')
     const [maiorDezoito, setMaiorDezoito] = useState(false)
@@ -69,36 +64,33 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
 
     const dispatch = useAppDispatch()
 
-    const setStateErrors = (name, error) => {
-        setErrors(prev => ({ ...prev, [name]: error }))
-    }
+    // const setStateErrors = (name, error) => {
+    //     setErrors(prev => ({ ...prev, [name]: error }))
+    // }
 
     const limparCampos = () => {
         setName('')
         setNascimento('')
         setGfCpf('')
         setRgCertidao('')
-        setRendaBruta('')
         setPcd('')
         setParentesco('')
         setMaiorDezoito('')
     }
 
-    const onClick = () => {
+    const onClickSubmit = () => {
         const dataSend = {
             gf_nome: name,
             gf_dt_nascimento: nascimento,
             gf_cpf: gfCpf,
             gf_rgCertidao: rgCertidao,
-            gf_renda_bruta: rendaBruta,
             gf_pcd: pcd,
             gf_parentesco: parentesco
         }
-
         const erros = verifyErrors()
         if (Object.keys(erros).length == 0) {
-            // dispatch(addIntegrante(dataSend))
-            // limparCampos()
+            dispatch(addIntegrante(dataSend))
+            limparCampos()
         }
     }
 
@@ -135,7 +127,6 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
         } else {
             if (!rgCertidao) erros.rgCertidao = 'RG ou Certidão é obrigatório.'
         }
-        if (!rendaBruta) erros.rendaBruta = 'Renda bruta é obrigatorio'
         if (!pcd) erros.pcd = 'O campo portador de deficiência é obrigatório'
         if (!parentesco) erros.parentesco = 'Parentesco é obrigatorio'
 
@@ -228,41 +219,6 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
                                     </FormControl>
                                 }
 
-
-                                <FormControl isInvalid={errors.rendaBruta}>
-                                    <FormLabel htmlFor='renda_bruta'>
-                                        <Box display='inline-block' mr={3}>
-                                            Renda bruta
-                                        </Box>
-                                        <Popover>
-                                            <PopoverTrigger>
-                                                <IconButton aria-label='' size='xs' icon={<QuestionOutlineIcon />} />
-                                            </PopoverTrigger>
-                                            <PopoverContent>
-                                                <PopoverArrow />
-                                                <PopoverCloseButton />
-                                                <PopoverBody bg='yellow.100'>Considera-se renda familiar o somatório da renda
-                                                    individual dos componentes do mesmo Grupo/Núcleo Familiar.</PopoverBody>
-                                            </PopoverContent>
-                                        </Popover>
-                                    </FormLabel>
-
-                                    <NumberFormat
-                                        customInput={ChakraInput}
-                                        bgColor='gray.50'
-                                        thousandSeparator='.'
-                                        prefix="R$"
-                                        decimalSeparator=','
-                                        decimalScale={2}
-                                        fixedDecimalScale={true}
-                                        value={rendaBruta}
-                                        onChange={e => setRendaBruta(e.target.value)}
-                                        onBlur={verifyErrors}
-                                    />
-
-                                    <FormErrorMessage>{errors.rendaBruta}</FormErrorMessage>
-                                </FormControl>
-
                                 <FormControl isInvalid={errors.pcd}>
                                     <Flex direction='column'>
                                         <FormLabel as='legend'>Portador de deficiência?*</FormLabel>
@@ -281,21 +237,42 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
                                 </FormControl>
 
                                 <FormControl isInvalid={errors.parentesco}>
+                                    <FormLabel htmlFor='cadunico'>
+                                        <Box display='inline-block' mr={3}>
+                                            Grau de parentesco*
+                                        </Box>
+                                        <Popover>
+                                            <PopoverTrigger>
+                                                <IconButton aria-label='' size='xs' icon={<QuestionOutlineIcon />} />
+                                            </PopoverTrigger>
+                                            <PopoverContent>
+                                                <PopoverArrow />
+                                                <PopoverCloseButton />
+                                                <PopoverBody bg='yellow.100'>Entende-se como grupo
+                                                    familiar, conforme Lei nº 12.435/2011 Art. 20. § 1º.
+                                                    "Para os efeitos do disposto no caput,
+                                                    a família é composta pelo requerente, o cônjuge ou companheiro,
+                                                    os pais e, na ausência de um deles, a madrasta ou o padrasto,
+                                                    os irmãos solteiros, os filhos e enteados solteiros e os menores
+                                                    tutelados, desde que vivam sob o mesmo teto."
+                                                </PopoverBody>
+                                            </PopoverContent>
+                                        </Popover>
+                                    </FormLabel>
                                     <Flex direction='column'>
-                                        <Select placeholder='Parentesco*'
+                                        <Select placeholder=' '
                                             value={parentesco}
                                             onChange={e => setParentesco(e.target.value)}
                                             onBlur={verifyErrors}
                                         >
-                                            <option value='Esposo/Esposa'>1. Esposo/Esposa</option>
-                                            <option value='Companheiro/Companheira'>2. Companheiro/Companheira</option>
-                                            <option value='Filho/Filha'>3. Filho/Filha</option>
-                                            <option value='Irmão/Irmã'>4. Irmão/Irmã</option>
-                                            <option value='Pai/Mãe'>5. Pai/Mãe</option>
-                                            <option value='Padrasto/Madrasta'>6. Padrasto/Madrasta</option>
-                                            <option value='Avô/Avó'>7. Avô/Avó</option>
-                                            <option value='Tio/Tia'>9. Tio/Tia</option>
-                                            <option value='Tutor(a), Tutelado(a) ou Curador(a) e Curatelado(a)'>8. Tutor(a), Tutelado(a) ou Curador(a) e Curatelado(a)</option>
+                                            <option value='Pai/Mãe'>1. Pai/Mãe</option>//
+                                            <option value='Padrasto/Madrasta'>2. Padrasto/Madrasta</option>//
+                                            <option value='Cônjuge'>3. Esposo/Esposa</option>
+                                            <option value='Companheiro/Companheira'>4. Companheiro/Companheira</option>
+                                            <option value='Filho/Filha'>5. Filho/Filha</option>
+                                            <option value='Enteado/Enteada'>6. Enteado/Enteada</option>
+                                            <option value='Irmão/Irmã'>7. Irmão/Irmã</option>
+                                            <option value='Avô/Avó'>8. Avô/Avó</option>
 
                                         </Select>
                                         <FormErrorMessage>{errors.parentesco}</FormErrorMessage>
@@ -309,7 +286,7 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
                     <ModalFooter>
                         <Button
                             type='button'
-                            onClick={onClick}
+                            onClick={onClickSubmit}
                             mb="16px"
                             bg='yellowOficial'
                             color='text'

@@ -40,6 +40,7 @@ import {
   getCepAddress,
   postRegister,
   registerUser,
+  removeIntegrante,
   selectRegister
 } from "../features/register/registerSlice";
 import { ModalGrupoFamiliar } from "../components/Modal/ModalGrupoFamiliar";
@@ -73,7 +74,8 @@ interface RegisterForm {
   bairro: string
   municipio: string
   uf: string
-  tempo_reside: string
+  reside_ano: string
+  reside_mes: string
   renda_bruta: string
   cadunico: string
   numero_cadunico: string
@@ -144,6 +146,14 @@ export default function Form() {
       });
   }
 
+  const onClickDelete = (integrante) => {
+    dispatch(removeIntegrante(integrante))
+  }
+
+  const onClickUpdate = () => {
+    alert('teste')
+  }
+
   const bg = useColorModeValue("white", "gray.800");
   const bg2 = useColorModeValue("white", "gray.800");
   const bg3 = useColorModeValue("gray.100", "gray.700");
@@ -182,6 +192,31 @@ export default function Form() {
 
         <VStack spacing={4}>
           <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
+            <FormControl isInvalid={errors.cpf}>
+              <FormLabel htmlFor='cpf'>
+                <Box display='inline-block' mr={3}>
+                  CPF*
+                </Box>
+
+              </FormLabel>
+              <Controller
+                name='cpf'
+                defaultValue=''
+                control={control}
+                rules={{
+                  required: 'CPF é obrigatorio',
+                  validate: value => cpf.isValid(value) || 'cpf inválido'
+                }}
+                render={({ field }) => <NumberFormat
+                  {...field}
+                  customInput={ChakraInput}
+                  bgColor='gray.50'
+                  format='###.###.###-##'
+                />}
+              />
+              <FormErrorMessage>{errors.cpf?.message}</FormErrorMessage>
+            </FormControl>
+
             <FormControl isInvalid={errors.nome} >
               <FormLabel htmlFor='nome'>
                 <Box display='inline-block' mr={3}>
@@ -211,31 +246,6 @@ export default function Form() {
                 })}
               />
               <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
-            </FormControl>
-
-            <FormControl isInvalid={errors.cpf}>
-              <FormLabel htmlFor='cpf'>
-                <Box display='inline-block' mr={3}>
-                  CPF*
-                </Box>
-
-              </FormLabel>
-              <Controller
-                name='cpf'
-                defaultValue=''
-                control={control}
-                rules={{
-                  required: 'CPF é obrigatorio',
-                  validate: value => cpf.isValid(value) || 'cpf inválido'
-                }}
-                render={({ field }) => <NumberFormat
-                  {...field}
-                  customInput={ChakraInput}
-                  bgColor='gray.50'
-                  format='###.###.###-##'
-                />}
-              />
-              <FormErrorMessage>{errors.cpf?.message}</FormErrorMessage>
             </FormControl>
           </SimpleGrid>
 
@@ -387,10 +397,11 @@ export default function Form() {
                   placeholder='Estado Civil*'
                   {...register("estado_civil", { required: "Estado civil é obrigatório." })}>
                   <option value='solteiro'>1. Solteiro</option>
-                  <option value='casado'>2. Casado</option>
-                  <option value='separado'>3. Separado</option>
-                  <option value='divorciado'>4. Divorciado</option>
-                  <option value='viuvo'>5. Viúvo</option>
+                  <option value='solteiro'>2. União estavel</option>
+                  <option value='casado'>3. Casado</option>
+                  <option value='separado'>4. Separado</option>
+                  <option value='divorciado'>5. Divorciado</option>
+                  <option value='viuvo'>6. Viúvo</option>
 
                 </Select>
                 <FormErrorMessage>{errors.estado_civil?.message}</FormErrorMessage>
@@ -521,7 +532,7 @@ export default function Form() {
             <FormControl isInvalid={errors.municipio} >
               <FormLabel htmlFor='municipio'>
                 <Box display='inline-block' mr={3}>
-                  Estado*
+                  Cidade*
                 </Box>
               </FormLabel>
               <ChakraInput bgColor='gray.50'
@@ -538,7 +549,7 @@ export default function Form() {
                   </Box>
                 </FormLabel>
                 <Select
-                  placeholder='Estado*'
+                  placeholder=' '
                   {...register("uf", { required: "Estado civil é obrigatório." })}>
                   <option value={'AC'}>AC</option>
                   <option value={'AL'}>AL</option>
@@ -591,23 +602,46 @@ export default function Form() {
           </Flex>
 
 
-          <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
-            <FormControl isInvalid={errors.tempo_reside} >
-              <FormLabel htmlFor='tempo_reside'>
+          <Flex direction='column' w='100%' >
+            <FormControl isInvalid={errors.reside_ano} >
+              <FormLabel htmlFor='reside_ano'>
                 <Box display='inline-block' mr={3}>
-                  Quanto tempo(anos) reside em Anápolis?*
+                  Quanto tempo reside em Anápolis?*
                 </Box>
               </FormLabel>
-              <ChakraInput bgColor='gray.50' type='number'
-                {...register("tempo_reside", { required: "Tempo de residencia é obrigatório." })}
-              />
-              <FormErrorMessage>{errors.tempo_reside?.message}</FormErrorMessage>
+              <Flex>
+                <ChakraInput
+                  bgColor='gray.50'
+                  type='number'
+                  maxW='100px'
+                  {...register("reside_ano", { required: "Tempo de residencia é obrigatório." })}
+                />
+                <Text ml={2} mt={2}>Ano(s)</Text>
+              </Flex>
+              <FormErrorMessage>{errors.reside_ano?.message}</FormErrorMessage>
             </FormControl>
 
+            <FormControl isInvalid={errors.reside_mes} >
+              <FormLabel htmlFor='reside_mes'>
+                <Box display='inline-block' mr={3}>
+
+                </Box>
+              </FormLabel>
+              <Flex>
+                <ChakraInput bgColor='gray.50' type='number' maxW='100px'
+                  {...register("reside_mes", { required: "Tempo de residencia é obrigatório." })}
+                />
+                <Text ml={2} mt={2}>Mês(es)</Text>
+              </Flex>
+              <FormErrorMessage>{errors.reside_mes?.message}</FormErrorMessage>
+            </FormControl>
+          </Flex>
+
+          <Flex w='100%'>
             <FormControl isInvalid={errors.renda_bruta}>
               <FormLabel htmlFor='renda_bruta'>
                 <Box display='inline-block' mr={3}>
-                  Renda bruta
+                  Renda bruta familiar
                 </Box>
                 <Popover>
                   <PopoverTrigger>
@@ -629,6 +663,7 @@ export default function Form() {
                 render={({ field }) => <NumberFormat
                   {...field}
                   customInput={ChakraInput}
+                  maxW='360px'
                   bgColor='gray.50'
                   thousandSeparator='.'
                   prefix="R$"
@@ -639,7 +674,8 @@ export default function Form() {
               />
               <FormErrorMessage>{errors.renda_bruta?.message}</FormErrorMessage>
             </FormControl>
-          </SimpleGrid>
+          </Flex>
+
 
           <FormControl isInvalid={errors.cadunico}>
             <SimpleGrid
@@ -714,53 +750,6 @@ export default function Form() {
                 <FormErrorMessage>{errors.numero_cadunico?.message}</FormErrorMessage>
               </FormControl>
             </SimpleGrid>}
-
-
-
-          <FormControl isInvalid={errors.pcd}>
-            <SimpleGrid
-              minChildWidth='240px'
-              spacing='4' w='100%'
-              sx={{ display: 'flex', justifyContent: 'flex-start' }}
-            >
-
-              <Flex direction='column'>
-                <FormLabel htmlFor='pcd'>
-                  <Box display='inline-block' mr={3}>
-                    Grupo familiar possui PCD?*
-                  </Box>
-                  <Popover>
-                    <PopoverTrigger>
-                      <IconButton aria-label='' size='xs' icon={<QuestionOutlineIcon />} />
-                    </PopoverTrigger>
-                    <PopoverContent>
-                      <PopoverArrow />
-                      <PopoverCloseButton />
-                      <PopoverBody bg='yellow.100'>Considera-se pessoa com deficiência(PCD) aquela que tem
-                        impedimento de longo prazo de natureza física, mental, intelectual ou
-                        sensorial, o qual, em interação com uma ou mais barreiras, pode obstruir
-                        sua participação plena e efetiva na sociedade em igualdade de condições
-                        com as demais pessoas. A comprovação da deficiência alegada se dará
-                        mediante o upload de laudo médico, atualizado, com data máxima de 12
-                        (meses) de expedição, no momento da inscrição, o qual deverá conter a
-                        Classificação Internacional de Doenças (CID).</PopoverBody>
-                    </PopoverContent>
-                  </Popover>
-                </FormLabel>
-
-                <RadioGroup name='pcd'>
-                  <HStack spacing='24px'>
-                    <Radio value='sim' type="radio"
-                      {...register("pcd", { required: 'Campo obrigatório' })}>Sim</Radio>
-                    <Radio value='nao' type="radio"
-                      {...register("pcd", { required: 'Campo obrigatório' })}>Não</Radio>
-                  </HStack>
-                </RadioGroup>
-                <FormErrorMessage>{errors.pcd?.message}</FormErrorMessage>
-              </Flex>
-
-            </SimpleGrid>
-          </FormControl>
 
           <FormControl isInvalid={errors.possui_imovel}>
             <SimpleGrid
@@ -1108,16 +1097,10 @@ export default function Form() {
                             <ButtonGroup variant="solid" size="sm" spacing={3}>
 
                               <IconButton
-                                colorScheme="blue"
-                                icon={<AiFillEdit />}
-                                aria-label="Edit"
-                              // onClick={ }
-                              />
-                              <IconButton
                                 colorScheme="red"
                                 icon={<BsFillTrashFill />}
                                 aria-label="Delete"
-                              // onClick={ }
+                                onClick={() => onClickDelete(item.integrante)}
                               />
                             </ButtonGroup>
                           </Flex>
