@@ -35,7 +35,7 @@ export default function Home() {
       <Box
         mt='4.4rem'
       >
-        <Box m='1rem'>
+        <Flex m='1rem' direction='column' >
           <Grid
             templateAreas={
               `"header header"
@@ -71,7 +71,7 @@ export default function Home() {
                 borderRadius='1rem'
                 boxShadow='md'
               >
-                <Box>
+                <Box mt='3.75rem'>
                   <Text as='p'>
                     A inscrição no Programa MEU LOTE MINHA HISTÓRIA
                     seguirá todas as regras contidas no Edital,
@@ -115,7 +115,7 @@ export default function Home() {
                 <Flex justify={'center'}>
                   <Button
                     size='lg'
-                    mt='5.5rem'
+                    mt='2rem'
                     bg='yellowOficial'
                     color='text'
                     onClick={onOpen}
@@ -171,7 +171,7 @@ export default function Home() {
 
           </Grid>
 
-        </Box>
+        </Flex>
       </Box>
 
 

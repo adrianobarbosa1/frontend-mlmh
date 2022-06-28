@@ -54,9 +54,9 @@ import { ListIcon } from "@chakra-ui/react";
 import { Grid } from "@chakra-ui/react";
 
 interface RegisterForm {
+  cpf: string;
   nome: string;
   email: string;
-  cpf: string;
   rg: string;
   uf_rg: string;
   dt_nascimento: string;
@@ -79,7 +79,6 @@ interface RegisterForm {
   renda_bruta: string
   cadunico: string
   numero_cadunico: string
-  pcd: string
   possui_imovel: string
   contemplado_habitacional: string
   comprador_imovel: string
@@ -126,8 +125,9 @@ export default function Form() {
   }
 
   const onSubmit: SubmitHandler<RegisterForm> = data => {
+    console.log(data)
     data.dt_nascimento = data.dt_nascimento.split('/').reverse().join('-');
-
+    data.integrante = []
     dispatch(postRegister(data))
       .unwrap()
       .then((result) => {
