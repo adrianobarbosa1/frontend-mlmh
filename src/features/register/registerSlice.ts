@@ -29,9 +29,8 @@ interface Integrante {
     integrante: string;
     gf_nome: string;
     gf_dt_nascimento: string;
-    gf_cpf: string;
-    gf_rg_certidao: string;
-    gf_renda_bruta: string;
+    gf_cpf?: string;
+    gf_rg_certidao?: string;
     gf_pcd: string;
     gf_parentesco: string;
 }

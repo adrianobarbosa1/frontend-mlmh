@@ -31,10 +31,9 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import NumberFormat from "react-number-format";
 import { useRouter } from "next/router";
-import { CheckIcon, Icon, QuestionOutlineIcon } from "@chakra-ui/icons";
+import { QuestionOutlineIcon } from "@chakra-ui/icons";
 import { cpf } from 'cpf-cnpj-validator';
-import { AiFillEdit, AiTwotoneLock } from "react-icons/ai";
-import { BsBoxArrowUpRight, BsFillTrashFill } from "react-icons/bs";
+import { BsFillTrashFill } from "react-icons/bs";
 
 import {
   getCepAddress,
@@ -44,13 +43,10 @@ import {
   selectRegister
 } from "../features/register/registerSlice";
 import { ModalGrupoFamiliar } from "../components/Modal/ModalGrupoFamiliar";
-import { Stack } from "@chakra-ui/react";
 import { useColorModeValue } from "@chakra-ui/react";
-import { chakra } from "@chakra-ui/react";
 import { ButtonGroup } from "@chakra-ui/react";
 import { List } from "@chakra-ui/react";
 import { ListItem } from "@chakra-ui/react";
-import { ListIcon } from "@chakra-ui/react";
 import { Grid } from "@chakra-ui/react";
 
 interface RegisterForm {
@@ -85,6 +81,17 @@ interface RegisterForm {
   arrimo_familia: string
   vitima_violencia: string
   grupo_familiar: string
+  integrantes: Integrante[]
+}
+
+interface Integrante {
+  integrante: string;
+  gf_nome: string;
+  gf_dt_nascimento: string;
+  gf_cpf?: string;
+  gf_rg_certidao?: string;
+  gf_pcd: string;
+  gf_parentesco: string;
 }
 
 export default function Form() {
@@ -101,9 +108,9 @@ export default function Form() {
   const { register: registro, integrantes } = useAppSelector(selectRegister);
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [switchOpen, setSwitchOpen] = useState(false)
-  const dispatch = useAppDispatch();
   const router = useRouter();
   const toast = useToast();
+  const dispatch = useAppDispatch();
 
   const wathGrupoFamiliar = watch('grupo_familiar')
   const wathCadunico = watch('cadunico')
@@ -125,9 +132,8 @@ export default function Form() {
   }
 
   const onSubmit: SubmitHandler<RegisterForm> = data => {
-    console.log(data)
     data.dt_nascimento = data.dt_nascimento.split('/').reverse().join('-');
-    data.integrante = []
+    data.integrantes = integrantes
     dispatch(postRegister(data))
       .unwrap()
       .then((result) => {
@@ -148,10 +154,6 @@ export default function Form() {
 
   const onClickDelete = (integrante) => {
     dispatch(removeIntegrante(integrante))
-  }
-
-  const onClickUpdate = () => {
-    alert('teste')
   }
 
   const bg = useColorModeValue("white", "gray.800");
@@ -675,7 +677,6 @@ export default function Form() {
               <FormErrorMessage>{errors.renda_bruta?.message}</FormErrorMessage>
             </FormControl>
           </Flex>
-
 
           <FormControl isInvalid={errors.cadunico}>
             <SimpleGrid
