@@ -28,6 +28,7 @@ export const theme = extendTheme({
             body: {
                 bgGradient: 'linear(to-r, gray50, gray.100)',
                 color: 'black.100',
+                bg: 'whitesmoke'
             }
         }
     }

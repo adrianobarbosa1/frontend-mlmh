@@ -18,7 +18,7 @@ export default function WithSubnavigation() {
   return (
     <Box
       w='100%'
-      position='absolute'
+      // position='absolute'
       boxShadow='md'
     >
       <Flex
@@ -65,7 +65,7 @@ export default function WithSubnavigation() {
             _hover={{
               bg: 'yellowOficial',
             }}>
-            Entrar
+            Gestor
           </Button>
         </Stack>
       </Flex>

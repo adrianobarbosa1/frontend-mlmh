@@ -11,6 +11,7 @@ import { theme } from '../styles/theme'
 import { makeServer } from '../services/mirage';
 import { QueryClient, QueryClientProvider } from 'react-query'
 import store from '../app/store';
+import Layout from '../components/layout';
 
 // if (process.env.NODE_ENV === 'development') {
 //   makeServer()
@@ -45,9 +46,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Provider store={store}>
         <ChakraProvider theme={theme}>
           <GlobalStyle>
-            <Header />
-            <Component {...pageProps} />
-            <Footer />
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
           </GlobalStyle>
         </ChakraProvider>
       </Provider>

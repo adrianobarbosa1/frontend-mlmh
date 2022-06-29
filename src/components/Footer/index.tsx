@@ -8,9 +8,9 @@ export default function Footer() {
   return (
     <Box
       as='footer'
-      position='relative'
+      w='100%'
+      // position='fixed'
       bg='blueGradient'
-      bottom={'0'}
     >
       <FooterSocials />
       <FooterLinks />

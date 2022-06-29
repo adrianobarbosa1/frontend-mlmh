@@ -83,7 +83,7 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
             gf_nome: name,
             gf_dt_nascimento: nascimento,
             gf_cpf: gfCpf,
-            gf_rgCertidao: rgCertidao,
+            gf_rg_certidao: rgCertidao,
             gf_pcd: pcd,
             gf_parentesco: parentesco
         }

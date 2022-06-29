@@ -66,12 +66,11 @@ interface RegisterForm {
   logradouro: string
   quadra: string
   lote: string
-  Complemento: string
+  complemento: string
   bairro: string
   municipio: string
   uf: string
   reside_ano: string
-  reside_mes: string
   renda_bruta: string
   cadunico: string
   numero_cadunico: string
@@ -134,6 +133,7 @@ export default function Form() {
   const onSubmit: SubmitHandler<RegisterForm> = data => {
     data.dt_nascimento = data.dt_nascimento.split('/').reverse().join('-');
     data.integrantes = integrantes
+    console.log(data)
     dispatch(postRegister(data))
       .unwrap()
       .then((result) => {
@@ -163,11 +163,8 @@ export default function Form() {
   return (
     <Flex
       w='100%'
-      maxWidth={1480}
-      ml={{ base: '0.1rem' }}
-      px={{ base: '0', md: '6' }}
+      px={{ base: '0', md: '4' }}
       my='6'
-      pt='5rem'
     >
       <Box
         as='form'
@@ -505,16 +502,16 @@ export default function Form() {
               <FormErrorMessage>{errors.lote?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isInvalid={errors.Complemento} >
+            <FormControl isInvalid={errors.complemento} >
               <FormLabel htmlFor='Complemento'>
                 <Box display='inline-block' mr={3}>
                   Complemento
                 </Box>
               </FormLabel>
               <ChakraInput bgColor='gray.50'
-                {...register("Complemento")}
+                {...register("complemento")}
               />
-              <FormErrorMessage>{errors.Complemento?.message}</FormErrorMessage>
+              <FormErrorMessage>{errors.complemento?.message}</FormErrorMessage>
             </FormControl>
           </SimpleGrid>
 
@@ -622,28 +619,13 @@ export default function Form() {
               </Flex>
               <FormErrorMessage>{errors.reside_ano?.message}</FormErrorMessage>
             </FormControl>
-
-            <FormControl isInvalid={errors.reside_mes} >
-              <FormLabel htmlFor='reside_mes'>
-                <Box display='inline-block' mr={3}>
-
-                </Box>
-              </FormLabel>
-              <Flex>
-                <ChakraInput bgColor='gray.50' type='number' maxW='100px'
-                  {...register("reside_mes", { required: "Tempo de residencia é obrigatório." })}
-                />
-                <Text ml={2} mt={2}>Mês(es)</Text>
-              </Flex>
-              <FormErrorMessage>{errors.reside_mes?.message}</FormErrorMessage>
-            </FormControl>
           </Flex>
 
           <Flex w='100%'>
             <FormControl isInvalid={errors.renda_bruta}>
               <FormLabel htmlFor='renda_bruta'>
                 <Box display='inline-block' mr={3}>
-                  Renda bruta familiar
+                  Renda bruta familiar*
                 </Box>
                 <Popover>
                   <PopoverTrigger>
@@ -1038,7 +1020,7 @@ export default function Form() {
                         <Box w='100%' h='100%' bg={useColorModeValue('gray.50', 'gray.900')} px={2} py={10}
                           fontSize={'sm'}>
                           <Heading as='h6' size='xs' mb={4} color={'blue.500'}>
-                            Integrante {item.integrante}
+                            Integrante {index + 1}
                           </Heading>
                           <List spacing={3}>
                             <ListItem >
