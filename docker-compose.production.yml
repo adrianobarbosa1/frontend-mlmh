@@ -1,0 +1,9 @@
+version: "1"
+
+services:
+  app:
+    image: mlmh
+    build:
+      dockerfile: Dockerfile.production
+    ports:
+      - 3000:3000

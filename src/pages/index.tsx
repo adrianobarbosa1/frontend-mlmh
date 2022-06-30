@@ -42,7 +42,7 @@ export default function Home() {
           color='text'
           fontWeight='bold'
           align={'center'}
-          w={{ sm: "70%", lg: "40%", xl: "100%" }}
+        // w={{ sm: "70%", lg: "40%", xl: "100%" }}
         >
           Meu Lote Minha História
         </Text>
