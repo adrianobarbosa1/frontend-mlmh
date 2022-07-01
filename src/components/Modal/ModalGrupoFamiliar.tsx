@@ -28,11 +28,9 @@ import {
     ModalBody,
     ModalFooter
 } from "@chakra-ui/react";
-import { Control, Controller, FieldErrors, FieldValues, useForm, UseFormRegister } from "react-hook-form";
 import NumberFormat from "react-number-format";
 import { cpf } from 'cpf-cnpj-validator';
 import { useState } from "react";
-import { dispatch } from "react-hot-toast/dist/core/store";
 import { addIntegrante, postExistCpf } from "../../features/register/registerSlice";
 import { useAppDispatch } from "../../app/hooks";
 
@@ -52,7 +50,19 @@ type VerifyErrors = {
 
 }
 
+interface ErrorForm {
+    name: string;
+    nascimento: string;
+    gfCpf: string;
+    rgCertidao: string;
+    pcd: string;
+    parentesco: string;
+}
+
+type InputEvent = React.ChangeEvent<HTMLInputElement>;
+
 export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
+    const dispatch = useAppDispatch()
     const [name, setName] = useState('')
     const [nascimento, setNascimento] = useState('')
     const [gfCpf, setGfCpf] = useState('')
@@ -60,13 +70,7 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
     const [pcd, setPcd] = useState('')
     const [parentesco, setParentesco] = useState('')
     const [maiorDezoito, setMaiorDezoito] = useState(false)
-    const [errors, setErrors] = useState({})
-
-    const dispatch = useAppDispatch()
-
-    // const setStateErrors = (name, error) => {
-    //     setErrors(prev => ({ ...prev, [name]: error }))
-    // }
+    const [errors, setErrors] = useState({} as ErrorForm)
 
     const limparCampos = () => {
         setName('')
@@ -75,7 +79,7 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
         setRgCertidao('')
         setPcd('')
         setParentesco('')
-        setMaiorDezoito('')
+        setMaiorDezoito(false)
     }
 
     const onClickSubmit = () => {
@@ -94,7 +98,7 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
         }
     }
 
-    const validDate = (dateString) => {
+    const validDate = (dateString: string) => {
         var today = new Date();
         dateString = dateString.split('/').reverse().join('-');
         var birthDate = new Date(dateString);
@@ -109,14 +113,14 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
         verifyErrors()
     }
 
-    const verificarCpf = (cpf) => {
+    const verificarCpf = (cpf: string) => {
         dispatch(postExistCpf(cpf))
         verifyErrors()
     }
 
     const verifyErrors = () => {
-        setErrors({})
-        const erros: VerifyErrors = {}
+        setErrors({} as ErrorForm)
+        const erros = {} as VerifyErrors
 
         if (!name) erros.name = 'Nome é obrigatório.'
         else if (name.length < 6) erros.name = 'Preencha com pelo menos 6 letras.'
@@ -145,7 +149,7 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
                     <ModalBody>
                         <VStack spacing='4'>
                             <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
-                                <FormControl isInvalid={errors.name} >
+                                <FormControl isInvalid={!!errors.name}>
                                     <FormLabel htmlFor='gf_nome'>
                                         <Box display='inline-block' mr={3}>
                                             Nome Completo*
@@ -160,7 +164,7 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
                                     <FormErrorMessage>{errors.name}</FormErrorMessage>
                                 </FormControl>
 
-                                <FormControl isInvalid={errors.nascimento}>
+                                <FormControl isInvalid={!!errors.nascimento}>
                                     <FormLabel htmlFor='gf_dt_nascimento'>
                                         <Box display='inline-block' mr={3}>
                                             Data de nascimento*
@@ -173,15 +177,15 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
                                         bgColor='gray.50'
                                         format='##/##/####'
                                         value={nascimento}
-                                        onChange={e => setNascimento(e.target.value)}
-                                        onBlur={e => validDate(e.target.value)}
+                                        onChange={(e: InputEvent) => setNascimento(e.target.value)}
+                                        onBlur={(e: InputEvent) => validDate(e.target.value)}
                                     />
 
                                     <FormErrorMessage>{errors.nascimento}</FormErrorMessage>
                                 </FormControl>
 
                                 {maiorDezoito &&
-                                    <FormControl isInvalid={errors.gfCpf}>
+                                    <FormControl isInvalid={!!errors.gfCpf}>
                                         <FormLabel htmlFor='gf_cpf'>
                                             <Box display='inline-block' mr={3}>
                                                 CPF*
@@ -194,8 +198,8 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
                                             bgColor='gray.50'
                                             format='###.###.###-##'
                                             value={gfCpf}
-                                            onChange={e => setGfCpf(e.target.value)}
-                                            onBlur={e => verificarCpf(e.target.value)}
+                                            onChange={(e: InputEvent) => setGfCpf(e.target.value)}
+                                            onBlur={(e: InputEvent) => verificarCpf(e.target.value)}
 
                                         />
 
@@ -204,7 +208,7 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
                                 }
 
                                 {!maiorDezoito &&
-                                    <FormControl isInvalid={errors.rgCertidao} >
+                                    <FormControl isInvalid={!!errors.rgCertidao} >
                                         <FormLabel htmlFor='gf_rg_certidao'>
                                             <Box display='inline-block' mr={3}>
                                                 RG ou Certidão de nascimento*
@@ -219,7 +223,7 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
                                     </FormControl>
                                 }
 
-                                <FormControl isInvalid={errors.pcd}>
+                                <FormControl isInvalid={!!errors.pcd}>
                                     <Flex direction='column'>
                                         <FormLabel as='legend'>Portador de deficiência?*</FormLabel>
                                         <RadioGroup
@@ -236,7 +240,7 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
                                     </Flex>
                                 </FormControl>
 
-                                <FormControl isInvalid={errors.parentesco}>
+                                <FormControl isInvalid={!!errors.parentesco}>
                                     <FormLabel htmlFor='cadunico'>
                                         <Box display='inline-block' mr={3}>
                                             Grau de parentesco*
@@ -250,11 +254,11 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
                                                 <PopoverCloseButton />
                                                 <PopoverBody bg='yellow.100'>Entende-se como grupo
                                                     familiar, conforme Lei nº 12.435/2011 Art. 20. § 1º.
-                                                    "Para os efeitos do disposto no caput,
+                                                    &quot;Para os efeitos do disposto no caput,
                                                     a família é composta pelo requerente, o cônjuge ou companheiro,
                                                     os pais e, na ausência de um deles, a madrasta ou o padrasto,
                                                     os irmãos solteiros, os filhos e enteados solteiros e os menores
-                                                    tutelados, desde que vivam sob o mesmo teto."
+                                                    tutelados, desde que vivam sob o mesmo teto.&quot;
                                                 </PopoverBody>
                                             </PopoverContent>
                                         </Popover>
@@ -265,8 +269,8 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
                                             onChange={e => setParentesco(e.target.value)}
                                             onBlur={verifyErrors}
                                         >
-                                            <option value='Pai/Mãe'>1. Pai/Mãe</option>//
-                                            <option value='Padrasto/Madrasta'>2. Padrasto/Madrasta</option>//
+                                            <option value='Pai/Mãe'>1. Pai/Mãe</option>
+                                            <option value='Padrasto/Madrasta'>2. Padrasto/Madrasta</option>
                                             <option value='Cônjuge'>3. Esposo/Esposa</option>
                                             <option value='Companheiro/Companheira'>4. Companheiro/Companheira</option>
                                             <option value='Filho/Filha'>5. Filho/Filha</option>

@@ -1,68 +1,42 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { string } from "yup";
 import { AppState } from "../../app/store";
+import { Register, RegisterState } from "./register.interface";
 import { cepAddress, existeCpf, registerCreate } from "./registerAPI";
-
-export interface Register {
-    nome: string;
-    email: string;
-    cpf: string;
-    dt_nascimento: string;
-    fone: string;
-    sexo: string;
-    estado_civil: string;
-    nacionalidade: string;
-    cep: string;
-    uf: string;
-    localidade: string;
-    bairro: string;
-    quadra: string;
-    lote: string;
-    logradouro: string;
-    complemento: string;
-    rg: string;
-    uf_rg: string;
-    protocolo: string;
-}
-
-interface Integrante {
-    integrante: string;
-    gf_nome: string;
-    gf_dt_nascimento: string;
-    gf_cpf?: string;
-    gf_rg_certidao?: string;
-    gf_pcd: string;
-    gf_parentesco: string;
-}
-
-export interface RegisterState {
-    register: Register;
-    cpfExiste: boolean;
-    integrantes: Integrante[]
-    status: "idle" | "loading" | "failed";
-}
 
 const initialState: RegisterState = {
     register: {
+        cpf: "",
         nome: "",
         email: "",
+        rg: "",
+        uf_rg: "",
+        dt_nascimento: "",
+        fone_celular: "",
+        fone_fixo: "",
+        sexo: "",
+        portador_pcd: "",
         estado_civil: "",
         nacionalidade: "",
         cep: "",
-        complemento: "",
-        cpf: "",
-        dt_nascimento: "",
-        fone: "",
-        sexo: "",
         logradouro: "",
-        bairro: "",
-        lote: "",
-        localidade: "",
         quadra: "",
-        rg: "",
+        lote: "",
+        complemento: "",
+        bairro: "",
+        localidade: "",
         uf: "",
-        uf_rg: "",
+        reside_ano: "",
+        renda_bruta: "",
+        cadunico: "",
+        numero_cadunico: "",
+        possui_imovel: "",
+        contemplado_habitacional: "",
+        comprador_imovel: "",
+        arrimo_familia: "",
+        vitima_violencia: "",
+        grupo_familiar: "",
         protocolo: "",
+        integrantes: [],
     },
     cpfExiste: false,
     integrantes: [],
@@ -79,17 +53,16 @@ export const getCepAddress = createAsyncThunk(
 
 export const postRegister = createAsyncThunk(
     "register/postRegister",
-    async (data) => {
+    async (data: Register) => {
         const response = await registerCreate(data);
-        return response;
+        return response.data.protocolo
     }
 );
 
 export const postExistCpf = createAsyncThunk(
     'register/postExistCpf',
-    async (cpf) => {
+    async (cpf: string) => {
         const response = await existeCpf(cpf)
-        // The value we return becomes the `fulfilled` action payload
         return response
     }
 )
@@ -101,7 +74,7 @@ export const registerSlice = createSlice({
         registerUser: (state, action) => {
             state.register = action.payload
         },
-        addIntegrante: (state, action) => {
+        addIntegrante: (state: RegisterState, action) => {
             const integrante = action.payload
             integrante.integrante = state.integrantes.length + 1
             state.integrantes.push(integrante)
@@ -126,7 +99,7 @@ export const registerSlice = createSlice({
             })
             .addCase(postRegister.fulfilled, (state, action) => {
                 state.status = "idle";
-                state.register = action.payload;
+                state.register.protocolo = action.payload;
             })
             .addCase(postExistCpf.pending, (state) => {
                 state.status = "loading";

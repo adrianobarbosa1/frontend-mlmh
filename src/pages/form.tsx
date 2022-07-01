@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -25,7 +25,13 @@ import {
   PopoverBody,
   FormErrorMessage,
   Checkbox,
-  useDisclosure
+  useDisclosure,
+  useColorModeValue,
+  ButtonGroup,
+  List,
+  ListItem,
+  Grid,
+
 } from "@chakra-ui/react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
@@ -43,55 +49,10 @@ import {
   selectRegister
 } from "../features/register/registerSlice";
 import { ModalGrupoFamiliar } from "../components/Modal/ModalGrupoFamiliar";
-import { useColorModeValue } from "@chakra-ui/react";
-import { ButtonGroup } from "@chakra-ui/react";
-import { List } from "@chakra-ui/react";
-import { ListItem } from "@chakra-ui/react";
-import { Grid } from "@chakra-ui/react";
+import { Register, RegisterResponse } from "../features/register/register.interface";
 
-interface RegisterForm {
-  cpf: string;
-  nome: string;
-  email: string;
-  rg: string;
-  uf_rg: string;
-  dt_nascimento: string;
-  fone_celular: string;
-  fone_fixo: string
-  sexo: string
-  portador_pcd: string
-  estado_civil: string
-  nacionalidade: string
-  cep: string
-  logradouro: string
-  quadra: string
-  lote: string
-  complemento: string
-  bairro: string
-  municipio: string
-  uf: string
-  reside_ano: string
-  renda_bruta: string
-  cadunico: string
-  numero_cadunico: string
-  possui_imovel: string
-  contemplado_habitacional: string
-  comprador_imovel: string
-  arrimo_familia: string
-  vitima_violencia: string
-  grupo_familiar: string
-  integrantes: Integrante[]
-}
-
-interface Integrante {
-  integrante: string;
-  gf_nome: string;
-  gf_dt_nascimento: string;
-  gf_cpf?: string;
-  gf_rg_certidao?: string;
-  gf_pcd: string;
-  gf_parentesco: string;
-}
+type InputEvent = React.ChangeEvent<HTMLInputElement>
+// type ButtonEvent = React.MouseEvent<HTMLButtonElement>;
 
 export default function Form() {
   const {
@@ -102,7 +63,7 @@ export default function Form() {
     watch,
     formState,
     formState: { errors }
-  } = useForm<RegisterForm>()
+  } = useForm<Register>()
 
   const { register: registro, integrantes } = useAppSelector(selectRegister);
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -118,26 +79,26 @@ export default function Form() {
     if (registro?.logradouro) {
       setValue("logradouro", registro.logradouro, { shouldValidate: true });
       setValue("bairro", registro.bairro, { shouldValidate: true });
-      setValue("municipio", registro.localidade, { shouldValidate: true });
+      setValue("localidade", registro.localidade, { shouldValidate: true });
       setValue("uf", registro.uf, { shouldValidate: true });
     }
-  }, [registro])
+  }, [registro, setValue])
 
-  const handleCep = (e) => {
+  function handleCep(e: InputEvent) {
     const cep = e.target.value;
     if (e.target.value?.length === 9) {
-      dispatch(getCepAddress(cep))
+      dispatch(getCepAddress(cep));
     }
   }
 
-  const onSubmit: SubmitHandler<RegisterForm> = data => {
+  const onSubmit = (data: Register) => {
     data.dt_nascimento = data.dt_nascimento.split('/').reverse().join('-');
     data.integrantes = integrantes
-    console.log(data)
+
     dispatch(postRegister(data))
       .unwrap()
       .then((result) => {
-        dispatch(registerUser(result.data.protocolo));
+        dispatch(registerUser(result));
         router.push("/protocolo");
       })
       .catch((error) => {
@@ -152,7 +113,7 @@ export default function Form() {
       });
   }
 
-  const onClickDelete = (integrante) => {
+  const onClickDelete = (integrante: string) => {
     dispatch(removeIntegrante(integrante))
   }
 
@@ -191,7 +152,7 @@ export default function Form() {
 
         <VStack spacing={4}>
           <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
-            <FormControl isInvalid={errors.cpf}>
+            <FormControl isInvalid={!!errors.cpf}>
               <FormLabel htmlFor='cpf'>
                 <Box display='inline-block' mr={3}>
                   CPF*
@@ -216,7 +177,7 @@ export default function Form() {
               <FormErrorMessage>{errors.cpf?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isInvalid={errors.nome} >
+            <FormControl isInvalid={!!errors.nome} >
               <FormLabel htmlFor='nome'>
                 <Box display='inline-block' mr={3}>
                   Nome Completo*
@@ -228,7 +189,7 @@ export default function Form() {
               <FormErrorMessage>{errors.nome?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isInvalid={errors.email} >
+            <FormControl isInvalid={!!errors.email} >
               <FormLabel htmlFor='email'>
                 <Box display='inline-block' mr={3}>
                   E-mail*
@@ -250,7 +211,7 @@ export default function Form() {
 
           <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
 
-            <FormControl isInvalid={errors.rg} >
+            <FormControl isInvalid={!!errors.rg} >
               <FormLabel htmlFor='rg'>
                 <Box display='inline-block' mr={3}>
                   RG*
@@ -262,7 +223,7 @@ export default function Form() {
               <FormErrorMessage>{errors.rg?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isInvalid={errors.uf_rg} >
+            <FormControl isInvalid={!!errors.uf_rg} >
               <FormLabel htmlFor='uf_rg'>
                 <Box display='inline-block' mr={3}>
                   UF RG*
@@ -274,7 +235,7 @@ export default function Form() {
               <FormErrorMessage>{errors.uf_rg?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isInvalid={errors.dt_nascimento}>
+            <FormControl isInvalid={!!errors.dt_nascimento}>
               <FormLabel htmlFor='dt_nascimento'>
                 <Box display='inline-block' mr={3}>
                   Data de nascimento*
@@ -299,7 +260,7 @@ export default function Form() {
               <FormErrorMessage>{errors.dt_nascimento?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isInvalid={errors.fone_celular}>
+            <FormControl isInvalid={!!errors.fone_celular}>
               <FormLabel htmlFor='fone_celular'>
                 <Box display='inline-block' mr={3}>
                   Celular*
@@ -324,7 +285,7 @@ export default function Form() {
               <FormErrorMessage>{errors.fone_celular?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isInvalid={errors.fone_fixo}>
+            <FormControl isInvalid={!!errors.fone_fixo}>
               <FormLabel htmlFor='fone_fixo'>
                 <Box display='inline-block' mr={3}>
                   Telefone Fixo
@@ -350,7 +311,7 @@ export default function Form() {
             spacing='4' w='100%'
             sx={{ display: 'flex', justifyContent: 'flex-start' }}
           >
-            <FormControl isInvalid={errors.sexo}>
+            <FormControl isInvalid={!!errors.sexo}>
 
               <Flex direction='column'>
                 <FormLabel as='legend'>Sexo*</FormLabel>
@@ -373,7 +334,7 @@ export default function Form() {
             spacing='4' w='100%'
             sx={{ display: 'flex', justifyContent: 'flex-start' }}
           >
-            <FormControl isInvalid={errors.portador_pcd}>
+            <FormControl isInvalid={!!errors.portador_pcd}>
               <Flex direction='column'>
                 <FormLabel as='legend'>Portador de deficiência?*</FormLabel>
                 <RadioGroup name='portador_pcd'>
@@ -390,7 +351,7 @@ export default function Form() {
           </SimpleGrid>
 
           <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
-            <FormControl isInvalid={errors.estado_civil}>
+            <FormControl isInvalid={!!errors.estado_civil}>
               <Flex direction='column'>
                 <Select
                   placeholder='Estado Civil*'
@@ -407,7 +368,7 @@ export default function Form() {
               </Flex>
             </FormControl>
 
-            <FormControl isInvalid={errors.nacionalidade}>
+            <FormControl isInvalid={!!errors.nacionalidade}>
               <Flex direction='column'>
                 <Select
                   placeholder='Nacionalidade*'
@@ -434,7 +395,7 @@ export default function Form() {
 
         <VStack spacing='4'>
           <SimpleGrid minChildWidth='240px' mt={2} spacing='4' w='100%'>
-            <FormControl isInvalid={errors.cep}>
+            <FormControl isInvalid={!!errors.cep}>
               <FormLabel htmlFor='cep'>
                 <Box display='inline-block' mr={3}>
                   CEP*
@@ -454,13 +415,13 @@ export default function Form() {
                   customInput={ChakraInput}
                   bgColor='gray.50'
                   format='#####-###'
-                  onBlur={(e) => handleCep(e)}
+                  onBlur={(e: InputEvent) => handleCep(e)}
                 />}
               />
               <FormErrorMessage>{errors.cep?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isInvalid={errors.logradouro} >
+            <FormControl isInvalid={!!errors.logradouro} >
               <FormLabel htmlFor='logradouro'>
                 <Box display='inline-block' mr={3}>
                   Endereço (“Rua, Avenida,etc”)*
@@ -478,7 +439,7 @@ export default function Form() {
           </SimpleGrid>
 
           <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
-            <FormControl isInvalid={errors.quadra} >
+            <FormControl isInvalid={!!errors.quadra} >
               <FormLabel htmlFor='quadra'>
                 <Box display='inline-block' mr={3}>
                   Quadra
@@ -490,7 +451,7 @@ export default function Form() {
               <FormErrorMessage>{errors.quadra?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isInvalid={errors.lote} >
+            <FormControl isInvalid={!!errors.lote} >
               <FormLabel htmlFor='lote'>
                 <Box display='inline-block' mr={3}>
                   Lote
@@ -499,10 +460,10 @@ export default function Form() {
               <ChakraInput bgColor='gray.50'
                 {...register("lote")}
               />
-              <FormErrorMessage>{errors.lote?.message}</FormErrorMessage>
+              <FormErrorMessage>{!!errors.lote?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isInvalid={errors.complemento} >
+            <FormControl isInvalid={!!errors.complemento} >
               <FormLabel htmlFor='Complemento'>
                 <Box display='inline-block' mr={3}>
                   Complemento
@@ -516,7 +477,7 @@ export default function Form() {
           </SimpleGrid>
 
           <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
-            <FormControl isInvalid={errors.bairro} >
+            <FormControl isInvalid={!!errors.bairro} >
               <FormLabel htmlFor='bairro'>
                 <Box display='inline-block' mr={3}>
                   Bairro*
@@ -528,21 +489,21 @@ export default function Form() {
               <FormErrorMessage>{errors.bairro?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isInvalid={errors.municipio} >
-              <FormLabel htmlFor='municipio'>
+            <FormControl isInvalid={!!errors.localidade} >
+              <FormLabel htmlFor='localidade'>
                 <Box display='inline-block' mr={3}>
                   Cidade*
                 </Box>
               </FormLabel>
               <ChakraInput bgColor='gray.50'
-                {...register("municipio", { required: "Municipio é obrigatório." })}
+                {...register("localidade", { required: "Municipio é obrigatório." })}
               />
-              <FormErrorMessage>{errors.municipio?.message}</FormErrorMessage>
+              <FormErrorMessage>{errors.localidade?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl isInvalid={errors.uf}>
+            <FormControl isInvalid={!!errors.uf}>
               <Flex direction='column'>
-                <FormLabel htmlFor='municipio'>
+                <FormLabel htmlFor='uf'>
                   <Box display='inline-block' mr={3}>
                     UF*
                   </Box>
@@ -602,7 +563,7 @@ export default function Form() {
 
 
           <Flex direction='column' w='100%' >
-            <FormControl isInvalid={errors.reside_ano} >
+            <FormControl isInvalid={!!errors.reside_ano} >
               <FormLabel htmlFor='reside_ano'>
                 <Box display='inline-block' mr={3}>
                   Quanto tempo reside em Anápolis?*
@@ -622,7 +583,7 @@ export default function Form() {
           </Flex>
 
           <Flex w='100%'>
-            <FormControl isInvalid={errors.renda_bruta}>
+            <FormControl isInvalid={!!errors.renda_bruta}>
               <FormLabel htmlFor='renda_bruta'>
                 <Box display='inline-block' mr={3}>
                   Renda bruta familiar*
@@ -660,7 +621,7 @@ export default function Form() {
             </FormControl>
           </Flex>
 
-          <FormControl isInvalid={errors.cadunico}>
+          <FormControl isInvalid={!!errors.cadunico}>
             <SimpleGrid
               minChildWidth='240px'
               spacing='4' w='100%'
@@ -705,7 +666,7 @@ export default function Form() {
           {wathCadunico == 'sim' &&
             <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
 
-              <FormControl isInvalid={errors.numero_cadunico} >
+              <FormControl isInvalid={!!errors.numero_cadunico} >
                 <FormLabel htmlFor='numero_cadunico'>
                   <Box display='inline-block' mr={3}>
                     Número do NIS*?
@@ -734,7 +695,7 @@ export default function Form() {
               </FormControl>
             </SimpleGrid>}
 
-          <FormControl isInvalid={errors.possui_imovel}>
+          <FormControl isInvalid={!!errors.possui_imovel}>
             <SimpleGrid
               minChildWidth='240px'
               spacing='4' w='100%'
@@ -775,7 +736,7 @@ export default function Form() {
             </SimpleGrid>
           </FormControl>
 
-          <FormControl isInvalid={errors.contemplado_habitacional}>
+          <FormControl isInvalid={!!errors.contemplado_habitacional}>
             <SimpleGrid
               minChildWidth='240px'
               spacing='4' w='100%'
@@ -815,7 +776,7 @@ export default function Form() {
             </SimpleGrid>
           </FormControl>
 
-          <FormControl isInvalid={errors.comprador_imovel}>
+          <FormControl isInvalid={!!errors.comprador_imovel}>
             <SimpleGrid
               minChildWidth='240px'
               spacing='4' w='100%'
@@ -857,7 +818,7 @@ export default function Form() {
             </SimpleGrid>
           </FormControl>
 
-          <FormControl isInvalid={errors.arrimo_familia}>
+          <FormControl isInvalid={!!errors.arrimo_familia}>
             <SimpleGrid
               minChildWidth='240px'
               spacing='4' w='100%'
@@ -896,7 +857,7 @@ export default function Form() {
             </SimpleGrid>
           </FormControl>
 
-          <FormControl isInvalid={errors.vitima_violencia}>
+          <FormControl isInvalid={!!errors.vitima_violencia}>
             <SimpleGrid
               minChildWidth='240px'
               spacing='4' w='100%'
@@ -941,7 +902,7 @@ export default function Form() {
 
           <Divider my='6' borderColor='blueOficial' />
 
-          <FormControl isInvalid={errors.grupo_familiar}>
+          <FormControl isInvalid={!!errors.grupo_familiar}>
             <SimpleGrid
               minChildWidth='240px'
               spacing='4' w='100%'
@@ -1017,7 +978,7 @@ export default function Form() {
                       >
 
 
-                        <Box w='100%' h='100%' bg={useColorModeValue('gray.50', 'gray.900')} px={2} py={10}
+                        <Box w='100%' h='100%' bg='gray.900' px={2} py={10}
                           fontSize={'sm'}>
                           <Heading as='h6' size='xs' mb={4} color={'blue.500'}>
                             Integrante {index + 1}
@@ -1055,12 +1016,6 @@ export default function Form() {
                               </ListItem>
                             }
 
-                            <ListItem>
-                              <Heading as='h6' size='xs'>
-                                Renda bruta:
-                              </Heading>
-                              {item.gf_renda_bruta}
-                            </ListItem>
                             <ListItem>
                               <Heading as='h6' size='xs'>
                                 PCD:

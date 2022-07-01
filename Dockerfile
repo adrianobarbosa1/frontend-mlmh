@@ -1,11 +1,12 @@
-FROM node:16-alpine
+FROM node:16-alpine AS deps
 
-WORKDIR /app
+RUN mkdir -p /usr/app/
+WORKDIR /usr/app
 
-COPY package.json yarn.lock ./
+COPY ./ ./
 
-RUN yarn install
+RUN npm install
+RUN npm run build
 
-COPY next.config.js ./next.config.js
-
-CMD ["yarn", "dev"]
+EXPOSE 3000
+CMD ["npm", "start"]

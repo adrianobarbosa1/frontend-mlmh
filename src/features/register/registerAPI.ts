@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { api } from '../../services/api';
+import { Register, RegisterResponse } from './register.interface';
 
 export async function cepAddress(cep: string): Promise<any | undefined> {
     try {
@@ -10,9 +11,9 @@ export async function cepAddress(cep: string): Promise<any | undefined> {
     }
 }
 
-export async function registerCreate(data) {
+export async function registerCreate(data: Register) {
     const response = api
-        .post("/register", data)
+        .post<RegisterResponse>("/register", data)
         .then((response) => {
             return response;
         })
@@ -22,7 +23,7 @@ export async function registerCreate(data) {
     return response;
 }
 
-export async function existeCpf(cpf) {
+export async function existeCpf(cpf: string) {
     // const response = await fetch('/api/counter', {
     //   method: 'POST',
     //   headers: {

@@ -22,10 +22,12 @@ import {
   Grid,
   Center
 } from "@chakra-ui/react";
+import { ArrowForwardIcon } from '@chakra-ui/icons'
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { ArrowForwardIcon } from "@chakra-ui/icons";
 import Layout from "../components/layout";
+import { info } from "console";
+import { on } from "events";
 
 export default function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -42,7 +44,6 @@ export default function Home() {
           color='text'
           fontWeight='bold'
           align={'center'}
-        // w={{ sm: "70%", lg: "40%", xl: "100%" }}
         >
           Meu Lote Minha História
         </Text>
@@ -76,17 +77,18 @@ export default function Home() {
         </Flex>
       </Flex>
 
+
       <Modal
-        blockScrollOnMount={false}
         isOpen={isOpen}
         closeOnOverlayClick={false}
         onClose={onClose}
+
         size={'2xl'}
       >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader textAlign={'center'}>Meu Lote Minha História</ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton onClick={() => setSwitchOpen(false)} />
           <ModalBody>
             <Text as='p' mb='1rem'>
               A inscrição no Programa MEU LOTE MINHA HISTÓRIA
