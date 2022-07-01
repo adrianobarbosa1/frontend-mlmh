@@ -53,6 +53,7 @@ import { Register, RegisterResponse } from "../features/register/register.interf
 
 type InputEvent = React.ChangeEvent<HTMLInputElement>
 // type ButtonEvent = React.MouseEvent<HTMLButtonElement>;
+//teste git
 
 export default function Form() {
   const {
