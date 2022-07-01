@@ -264,7 +264,7 @@ export default function Form() {
             <FormControl isInvalid={!!errors.fone_celular}>
               <FormLabel htmlFor='fone_celular'>
                 <Box display='inline-block' mr={3}>
-                  Celular*
+                  Whatsapp*
                 </Box>
 
               </FormLabel>
