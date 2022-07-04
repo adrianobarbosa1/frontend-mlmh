@@ -66,7 +66,7 @@ export default function Form() {
     formState: { errors }
   } = useForm<Register>()
 
-  const { register: registro, integrantes } = useAppSelector(selectRegister);
+  const { register: registro, integrantes, status } = useAppSelector(selectRegister);
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [switchOpen, setSwitchOpen] = useState(false)
   const router = useRouter();
@@ -89,6 +89,20 @@ export default function Form() {
     const cep = e.target.value;
     if (e.target.value?.length === 9) {
       dispatch(getCepAddress(cep));
+    }
+  }
+
+  const onBlurCpf = (e) => {
+    const CPF = e.target.value
+    if (!cpf.isValid(CPF)) {
+      toast({
+        position: 'top',
+        title: "Ocorreu um erro.",
+        description: `CPF inválido`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      })
     }
   }
 
@@ -171,6 +185,7 @@ export default function Form() {
                 render={({ field }) => <NumberFormat
                   {...field}
                   customInput={ChakraInput}
+                  onBlur={e => onBlurCpf(e)}
                   bgColor='gray.50'
                   format='###.###.###-##'
                 />}
@@ -1065,7 +1080,7 @@ export default function Form() {
           {switchOpen ? (
             <Button
               type='submit'
-              isLoading={formState.isSubmitting}
+              isLoading={status === 'loading'}
               mb="16px"
               bg='yellowOficial'
               color='text'
