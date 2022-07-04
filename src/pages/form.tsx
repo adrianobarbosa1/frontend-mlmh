@@ -979,20 +979,20 @@ export default function Form() {
                       >
 
 
-                        <Box w='100%' h='100%' bg='gray.900' px={2} py={10}
+                        <Box w='100%' h='100%' bg='blue.100' px={2} py={10}
                           fontSize={'sm'}>
                           <Heading as='h6' size='xs' mb={4} color={'blue.500'}>
                             Integrante {index + 1}
                           </Heading>
                           <List spacing={3}>
                             <ListItem >
-                              <Heading as='h6' size='xs'>
+                              <Heading as='h6' size='xs' color={'blue.500'}>
                                 Nome:
                               </Heading>
                               {item.gf_nome}
                             </ListItem>
                             <ListItem>
-                              <Heading as='h6' size='xs'>
+                              <Heading as='h6' size='xs' color={'blue.500'}>
                                 Data de nascimento:
                               </Heading>
                               {item.gf_dt_nascimento}
@@ -1000,7 +1000,7 @@ export default function Form() {
 
                             {item.gf_cpf !== undefined &&
                               <ListItem>
-                                <Heading as='h6' size='xs'>
+                                <Heading as='h6' size='xs' color={'blue.500'}>
                                   CPF:
                                 </Heading>
                                 {item.gf_cpf}
@@ -1010,7 +1010,7 @@ export default function Form() {
                             {item.gf_rg_certidao !== undefined &&
 
                               <ListItem>
-                                <Heading as='h6' size='xs'>
+                                <Heading as='h6' size='xs' color={'blue.500'}>
                                   RG/ Certidão:
                                 </Heading>
                                 {item.gf_rg_certidao}
@@ -1018,13 +1018,13 @@ export default function Form() {
                             }
 
                             <ListItem>
-                              <Heading as='h6' size='xs'>
+                              <Heading as='h6' size='xs' color={'blue.500'}>
                                 PCD:
                               </Heading>
                               {item.gf_pcd}
                             </ListItem>
                             <ListItem>
-                              <Heading as='h6' size='xs'>
+                              <Heading as='h6' size='xs' color={'blue.500'}>
                                 Parentesco:
                               </Heading>
                               {item.gf_parentesco}
