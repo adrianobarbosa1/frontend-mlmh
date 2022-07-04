@@ -16,6 +16,7 @@ import {
     Popover,
     PopoverTrigger,
     PopoverContent,
+    useToast,
     PopoverArrow,
     PopoverCloseButton,
     PopoverBody,
@@ -31,7 +32,7 @@ import {
 import NumberFormat from "react-number-format";
 import { cpf } from 'cpf-cnpj-validator';
 import { useState } from "react";
-import { addIntegrante, postExistCpf } from "../../features/register/registerSlice";
+import { addIntegrante, getCpfExist, postExistCpf } from "../../features/register/registerSlice";
 import { useAppDispatch } from "../../app/hooks";
 
 interface ModalProps {
@@ -71,6 +72,7 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
     const [parentesco, setParentesco] = useState('')
     const [maiorDezoito, setMaiorDezoito] = useState(false)
     const [errors, setErrors] = useState({} as ErrorForm)
+    const toast = useToast();
 
     const limparCampos = () => {
         setName('')
@@ -113,8 +115,34 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
         verifyErrors()
     }
 
-    const verificarCpf = (cpf: string) => {
-        dispatch(postExistCpf(cpf))
+    const verificarCpf = (CPF: string) => {
+        if (!cpf.isValid(CPF)) {
+            toast({
+                position: 'top',
+                title: "Ocorreu um erro.",
+                description: `CPF inválido`,
+                status: "error",
+                duration: 9000,
+                isClosable: true,
+            })
+        } else {
+            if (CPF.length === 14) {
+                dispatch(postExistCpf(CPF))
+                dispatch(getCpfExist(CPF))
+                    .unwrap()
+                    .then()
+                    .catch((error) => {
+                        toast({
+                            position: 'top',
+                            title: "Ocorreu um erro.",
+                            description: `${error.message}`,
+                            status: "error",
+                            duration: 9000,
+                            isClosable: true,
+                        })
+                    });
+            }
+        }
         verifyErrors()
     }
 

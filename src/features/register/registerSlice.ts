@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppState } from "../../app/store";
 import { Register, RegisterState } from "./register.interface";
-import { cepAddress, existeCpf, registerCreate } from "./registerAPI";
+import { cepAddress, cpfExist, existeCpf, registerCreate } from "./registerAPI";
 
 const initialState: RegisterState = {
     register: {
@@ -51,6 +51,14 @@ export const getCepAddress = createAsyncThunk(
     }
 );
 
+export const getCpfExist = createAsyncThunk(
+    "register/getCpfExist",
+    async (cpf: string) => {
+        const response = await cpfExist(cpf);
+        return response.data;
+    }
+);
+
 export const postRegister = createAsyncThunk(
     "register/postRegister",
     async (data: Register) => {
@@ -91,6 +99,13 @@ export const registerSlice = createSlice({
                 state.status = "loading";
             })
             .addCase(getCepAddress.fulfilled, (state, action) => {
+                state.status = "idle";
+                state.register = { ...state.register, ...action.payload };
+            })
+            .addCase(getCpfExist.pending, (state) => {
+                state.status = "loading";
+            })
+            .addCase(getCpfExist.fulfilled, (state, action) => {
                 state.status = "idle";
                 state.register = { ...state.register, ...action.payload };
             })

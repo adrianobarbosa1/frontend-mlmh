@@ -43,6 +43,7 @@ import { BsFillTrashFill } from "react-icons/bs";
 
 import {
   getCepAddress,
+  getCpfExist,
   postRegister,
   registerUser,
   removeIntegrante,
@@ -103,6 +104,22 @@ export default function Form() {
         duration: 9000,
         isClosable: true,
       })
+    } else {
+      if (e.target.value?.length === 14) {
+        dispatch(getCpfExist(CPF))
+          .unwrap()
+          .then()
+          .catch((error) => {
+            toast({
+              position: 'top',
+              title: "Ocorreu um erro.",
+              description: `${error.message}`,
+              status: "error",
+              duration: 9000,
+              isClosable: true,
+            })
+          });
+      }
     }
   }
 

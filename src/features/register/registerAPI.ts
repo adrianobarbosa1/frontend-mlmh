@@ -11,6 +11,19 @@ export async function cepAddress(cep: string): Promise<any | undefined> {
     }
 }
 
+export async function cpfExist(cpf: string): Promise<any | undefined> {
+    const response = api
+        .get(`/register/${cpf}`)
+        .then((response) => {
+            console.log(response)
+            return response;
+        })
+        .catch((error) => {
+            throw new Error(error.response.data.message);
+        });
+    return response;
+}
+
 export async function registerCreate(data: Register) {
     const response = api
         .post<RegisterResponse>("/register", data)
