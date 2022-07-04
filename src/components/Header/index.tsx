@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Box,
   Flex,
@@ -39,11 +40,13 @@ export default function WithSubnavigation() {
 
           </Text>
 
-          <Image
-            htmlWidth='150px'
-            objectFit='cover'
-            src='img/logo_branco.png' alt='logo Anápolis' />
-
+          <Link href="/" >
+            <Image
+              cursor='pointer'
+              htmlWidth='150px'
+              objectFit='cover'
+              src='img/logo_branco.png' alt='logo Anápolis' />
+          </Link>
 
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
             {/* <DesktopNav /> */}
