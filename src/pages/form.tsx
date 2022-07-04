@@ -92,7 +92,7 @@ export default function Form() {
     }
   }
 
-  const onBlurCpf = (e) => {
+  const onBlurCpf = (e: InputEvent) => {
     const CPF = e.target.value
     if (!cpf.isValid(CPF)) {
       toast({
@@ -185,7 +185,7 @@ export default function Form() {
                 render={({ field }) => <NumberFormat
                   {...field}
                   customInput={ChakraInput}
-                  onBlur={e => onBlurCpf(e)}
+                  onBlur={(e: InputEvent) => onBlurCpf(e)}
                   bgColor='gray.50'
                   format='###.###.###-##'
                 />}
