@@ -95,8 +95,22 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
         }
         const erros = verifyErrors()
         if (Object.keys(erros).length == 0) {
-            dispatch(addIntegrante(dataSend))
-            limparCampos()
+            dispatch(getCpfExist(dataSend.gf_cpf))
+                .unwrap()
+                .then(response => {
+                    dispatch(addIntegrante(dataSend))
+                    limparCampos()
+                })
+                .catch((error) => {
+                    toast({
+                        position: 'top',
+                        title: "Ocorreu um erro.",
+                        description: `${error.message}`,
+                        status: "error",
+                        duration: 9000,
+                        isClosable: true,
+                    })
+                });
         }
     }
 
@@ -128,19 +142,7 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
         } else {
             if (CPF.length === 14) {
                 dispatch(postExistCpf(CPF))
-                dispatch(getCpfExist(CPF))
-                    .unwrap()
-                    .then()
-                    .catch((error) => {
-                        toast({
-                            position: 'top',
-                            title: "Ocorreu um erro.",
-                            description: `${error.message}`,
-                            status: "error",
-                            duration: 9000,
-                            isClosable: true,
-                        })
-                    });
+
             }
         }
         verifyErrors()

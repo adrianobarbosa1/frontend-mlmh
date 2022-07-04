@@ -109,12 +109,18 @@ export const registerSlice = createSlice({
                 state.status = "idle";
                 state.register = { ...state.register, ...action.payload };
             })
+            .addCase(getCpfExist.rejected, (state, action) => {
+                state.status = "idle";
+            })
             .addCase(postRegister.pending, (state) => {
                 state.status = "loading";
             })
             .addCase(postRegister.fulfilled, (state, action) => {
                 state.status = "idle";
                 state.register.protocolo = action.payload;
+            })
+            .addCase(postRegister.rejected, (state, action) => {
+                state.status = "idle";
             })
             .addCase(postExistCpf.pending, (state) => {
                 state.status = "loading";
