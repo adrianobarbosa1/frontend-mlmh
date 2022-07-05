@@ -91,6 +91,9 @@ export const registerSlice = createSlice({
             const integranteIndex = state.integrantes.map((e) => e.integrante).indexOf(action.payload);
             state.integrantes.splice(integranteIndex, 1);
         },
+        limparIntegrante: (state: RegisterState) => {
+            state.integrantes = []
+        }
     },
 
     extraReducers: (builder) => {
@@ -132,7 +135,7 @@ export const registerSlice = createSlice({
     },
 })
 
-export const { registerUser, addIntegrante, removeIntegrante } = registerSlice.actions;
+export const { registerUser, addIntegrante, removeIntegrante, limparIntegrante } = registerSlice.actions;
 
 export const selectRegister = (state: AppState) => state.register;
 

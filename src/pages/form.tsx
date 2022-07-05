@@ -44,6 +44,7 @@ import { BsFillTrashFill } from "react-icons/bs";
 import {
   getCepAddress,
   getCpfExist,
+  limparIntegrante,
   postRegister,
   registerUser,
   removeIntegrante,
@@ -131,6 +132,7 @@ export default function Form() {
       .unwrap()
       .then((result) => {
         dispatch(registerUser(result));
+        dispatch(limparIntegrante());
         router.push("/protocolo");
       })
       .catch((error) => {
