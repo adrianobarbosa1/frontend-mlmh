@@ -95,22 +95,27 @@ export const ModalGrupoFamiliar = ({ isOpen, onClose }: ModalProps) => {
         }
         const erros = verifyErrors()
         if (Object.keys(erros).length == 0) {
-            dispatch(getCpfExist(dataSend.gf_cpf))
-                .unwrap()
-                .then(response => {
-                    dispatch(addIntegrante(dataSend))
-                    limparCampos()
-                })
-                .catch((error) => {
-                    toast({
-                        position: 'top',
-                        title: "Ocorreu um erro.",
-                        description: `${error.message}`,
-                        status: "error",
-                        duration: 9000,
-                        isClosable: true,
+            if (maiorDezoito) {
+                dispatch(getCpfExist(dataSend.gf_cpf))
+                    .unwrap()
+                    .then(response => {
+                        dispatch(addIntegrante(dataSend))
+                        limparCampos()
                     })
-                });
+                    .catch((error) => {
+                        toast({
+                            position: 'top',
+                            title: "Ocorreu um erro.",
+                            description: `${error.message}`,
+                            status: "error",
+                            duration: 9000,
+                            isClosable: true,
+                        })
+                    });
+            } else {
+                dispatch(addIntegrante(dataSend))
+                limparCampos()
+            }
         }
     }
 
