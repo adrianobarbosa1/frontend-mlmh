@@ -307,7 +307,7 @@ export default function Form() {
                   <PopoverContent>
                     <PopoverArrow />
                     <PopoverCloseButton />
-                    <PopoverBody bg='yellow.100'>Para possibiliar contato de visita.</PopoverBody>
+                    <PopoverBody bg='yellow.100'>Para possibilitar contato de visita.</PopoverBody>
                   </PopoverContent>
                 </Popover>
               </FormLabel>
