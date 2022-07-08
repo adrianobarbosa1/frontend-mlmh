@@ -8,6 +8,7 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
+  useToast,
   Modal,
   useDisclosure,
   Switch,
@@ -16,24 +17,18 @@ import {
   Box,
   Input as ChakraInput,
   FormErrorMessage,
-  SimpleGrid,
-  Heading,
-  GridItem,
-  Grid,
-  Center
+  Heading
 } from "@chakra-ui/react";
 import { ArrowForwardIcon } from '@chakra-ui/icons'
 import { useState } from "react";
 import { useRouter } from "next/router";
-import Layout from "../components/layout";
-import { info } from "console";
-import { on } from "events";
 
 export default function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { isOpen: isOpen2, onOpen: onOpen2, onClose: onClose2 } = useDisclosure()
   const [switchOpen, setSwitchOpen] = useState(false)
   const router = useRouter();
+  const toast = useToast();
 
   return (
     <Flex direction='column' background='url(/img/background.jpg) center/cover no-repeat'>
@@ -188,6 +183,14 @@ export default function Home() {
                 mt='2rem'
                 bg='yellowOficial'
                 color='text'
+                onClick={e => toast({
+                  position: 'top',
+                  title: "Aguarde edital",
+                  description: `Aguarde liberação no edital, para alterar os dados.`,
+                  status: "warning",
+                  duration: 9000,
+                  isClosable: true,
+                })}
                 rightIcon={<ArrowForwardIcon />}
               >
                 Entrar
