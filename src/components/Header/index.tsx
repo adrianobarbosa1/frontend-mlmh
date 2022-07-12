@@ -9,7 +9,8 @@ import {
   useColorModeValue,
   useBreakpointValue,
   useDisclosure,
-  Image
+  Image,
+  HStack
 } from '@chakra-ui/react';
 import MobileNav from './MobileNav';
 
@@ -40,13 +41,24 @@ export default function WithSubnavigation() {
 
           </Text>
 
-          <Link href="/" >
-            <Image
-              cursor='pointer'
-              htmlWidth='150px'
-              objectFit='cover'
-              src='img/logo_branco.png' alt='logo Anápolis' />
-          </Link>
+          <HStack>
+            <Link href="/" >
+              <Image
+                display={{ base: 'none', md: 'flex' }}
+                cursor='pointer'
+                htmlWidth='150px'
+                objectFit='cover'
+                src='img/mlmhwhite.png' alt='logo Anápolis' />
+            </Link>
+
+            <Link href="/" >
+              <Image
+                cursor='pointer'
+                htmlWidth='150px'
+                objectFit='cover'
+                src='img/logo_branco.png' alt='logo Anápolis' />
+            </Link>
+          </HStack>
 
           <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
             {/* <DesktopNav /> */}

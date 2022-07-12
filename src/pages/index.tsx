@@ -9,6 +9,7 @@ import {
   ModalBody,
   ModalFooter,
   useToast,
+  Image,
   Modal,
   useDisclosure,
   Switch,
@@ -17,9 +18,11 @@ import {
   Box,
   Input as ChakraInput,
   FormErrorMessage,
-  Heading
+  Heading,
+  Center
 } from "@chakra-ui/react";
 import { ArrowForwardIcon } from '@chakra-ui/icons'
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/router";
 
@@ -31,9 +34,22 @@ export default function Home() {
   const toast = useToast();
 
   return (
-    <Flex direction='column' background='url(/img/background.jpg) center/cover no-repeat'>
+    <Flex direction='column'
+    //  background='url(/img/background.jpg) center/cover no-repeat'
+    >
       <Box w='100%'>
-        <Text
+        <Center
+        // background='url(/img/background.jpg) center/cover no-repeat'
+        >
+          <Link href="/" >
+            <Image
+              mt='7rem'
+              htmlWidth='800px'
+              objectFit='cover'
+              src='img/mlmhblue.png' alt='logo Meu lote minha historia' />
+          </Link>
+        </Center>
+        {/* <Text
           mt='2rem'
           fontSize='4xl'
           color='text'
@@ -41,13 +57,13 @@ export default function Home() {
           align={'center'}
         >
           Meu Lote Minha História
-        </Text>
+        </Text> */}
       </Box>
 
-      <Flex justify={'center'} align='center' mt='10rem' mb='17rem'>
+      <Flex justify={'center'} align='center' mt='2rem' mb='2rem'>
         <Flex >
           <Button
-            size='md'
+            size='lg'
             mt='2rem'
             bg='yellowOficial'
             color='text'
@@ -60,7 +76,7 @@ export default function Home() {
         <Flex justify={'center'} ml='3rem'>
           <Button
 
-            size='md'
+            size='lg'
             mt='2rem'
             bg='yellowOficial'
             color='text'
