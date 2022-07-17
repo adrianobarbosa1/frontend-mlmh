@@ -103,7 +103,7 @@ export default function Home() {
           <ModalBody>
             <Text as='p' mb='1rem'>
               A inscrição no Programa MEU LOTE MINHA HISTÓRIA
-              seguirá EDITAL DE CHAMAMENTO PÚBLICO Nº xxx/2022
+              seguirá EDITAL DE CHAMAMENTO PÚBLICO Nº 001/2022
 
               de acordo com Lei Complementar Municipal nº 493,
               de 19 de maio de 2022.
