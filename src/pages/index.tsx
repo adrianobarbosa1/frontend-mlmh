@@ -87,8 +87,16 @@ export default function Home() {
           </Button>
         </Flex>
       </Flex>
-
-
+      <Center>
+        <Text
+          color="blue.500"
+          fontSize='xl'
+          mb='4rem'
+          cursor={'pointer'}
+          onClick={() => router.push('/perguntaserespotas')}
+        >
+          Perguntas e respotas CLIQUE AQUI!</Text>
+      </Center>
       <Modal
         isOpen={isOpen}
         closeOnOverlayClick={false}
