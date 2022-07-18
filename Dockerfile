@@ -1,12 +1,19 @@
 FROM node:alpine
 
-RUN mkdir -p /usr/app/
 WORKDIR /usr/app
 
-COPY ./ ./
+RUN npm install --global pm2
+
+COPY package*.json ./
 
 RUN npm install
+
+COPY . .
+
 RUN npm run build
 
 EXPOSE 3000
-CMD ["npm", "start"]
+
+USER node
+
+CMD [ "pm2-runtime", "npm", "--", "start" ]

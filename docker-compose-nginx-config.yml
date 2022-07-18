@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  db:
+    image: mongo:4.4.6
+    ports:
+      - "27017:27017"
+    networks:
+      - host
+
+  backend:
+    build:
+      context: ./backend-mlmh
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+    networks:
+      - host
+
+  frontend:
+    build:
+      context: ./frontend-mlmh
+      dockerfile: Dockerfile
+    depends_on:
+      - backend
+    networks:
+      - host
+
+  nginx:
+    build: ./frontend-mlmh/nginx
+    ports:
+      - 3000:80
+    depends_on:
+      - frontend
+    networks:
+      - host
+
+networks:
+  host:
+    driver: bridge
