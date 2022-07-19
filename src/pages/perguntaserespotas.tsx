@@ -51,7 +51,7 @@ export default function PerguntasRespotas() {
                     Residir no município de Anápolis há pelo menos 5 (cinco) anos consecutivos e ininterruptos, em período anterior a inscrição, mediante ato autodeclaratório e posteriormente confirmado na fase de visitas técnicas, com apresentação de documentos oficiais.<br /><br />
 
                     <b>3 – SERÁ OBRIGATÓRIO O CADASTRO ÚNICO PARA A INSCRIÇÃO NO PROGRAMA MEU LOTE, MINHA HISTÓRIA?</b><br />
-                    R: Não será obrigatório ter cadastro único para se inscrever no Programa Meu Lote, Minha História.
+                    R: Não será obrigatório ter cadastro único para se inscrever no Programa Meu Lote, Minha História.<br /><br />
 
                     <b>4 - AS INSCRIÇÕES SERÃO FEITAS COMO?</b><br />
                     R: As inscrições serão realizadas exclusivamente, via Internet, no portal do Programa, pelo site www.anapolis.go.gov.br/meuloteminhahistoria a partir do dia 19 de julho de 2022, encerrando-se às 23h59 do dia 16 de setembro de 2022, e deverão ser realizadas mediante preenchimento dos dados solicitados pelo sistema e de seus anexos. Não serão aceitas inscrições efetuadas de forma diversa da estabelecida no edital.
@@ -118,6 +118,6 @@ export default function PerguntasRespotas() {
                     </Link>
                 </Center>
             </Flex>
-        </Flex>
+        </Flex >
     )
 }
