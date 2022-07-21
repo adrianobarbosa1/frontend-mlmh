@@ -88,38 +88,38 @@ export default function Home() {
         </Flex>
       </Flex>
       <Center>
-      <Flex direction='column'>
-      <Text
-          color="blue.500"
-          fontSize='xl'
-          mb='1rem'
-          cursor={'pointer'}
-          onClick={() => router.push('/perguntaserespotas')}
-        >
-          Perguntas e respotas CLIQUE AQUI!</Text>
-          
+        <Flex direction='column'>
+          <Text
+            color="blue.500"
+            fontSize='xl'
+            mb='1rem'
+            cursor={'pointer'}
+            onClick={() => router.push('/perguntaserespotas')}
+          >
+            Perguntas e respostas CLIQUE AQUI!</Text>
+
           <a href="https://cdn.anapolis.go.gov.br/arquivos/mlmh/edital_chamamento_001_2022.pdf" target='_blank' rel="noreferrer">
-          <Text
-          color="blue.500"
-          fontSize='xl'
-          mb='1rem'
-          cursor={'pointer'}
-        >
-          Edital de chamamento 001/2022</Text>
+            <Text
+              color="blue.500"
+              fontSize='xl'
+              mb='1rem'
+              cursor={'pointer'}
+            >
+              Edital de chamamento 001/2022</Text>
           </a>
- 
+
           <a href="https://cdn.anapolis.go.gov.br/arquivos/mlmh/diario_oficial_18_julho_2022.pdf" target='_blank' rel="noreferrer" >
-          <Text
-          color="blue.500"
-          fontSize='xl'
-          mb='1rem'
-          cursor={'pointer'}
-        >
-          Diário oficial 18 de julho de 2022</Text>
+            <Text
+              color="blue.500"
+              fontSize='xl'
+              mb='1rem'
+              cursor={'pointer'}
+            >
+              Diário oficial 18 de julho de 2022</Text>
           </a>
-         
-         </Flex>
-      
+
+        </Flex>
+
       </Center>
       <Modal
         isOpen={isOpen}
