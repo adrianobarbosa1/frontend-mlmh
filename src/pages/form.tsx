@@ -170,6 +170,9 @@ export default function Form() {
         boxShadow='dark-lg'
         rounded='xl'
       >
+        <Box bg='#ffc72c' p='2rem' borderRadius='1rem'>
+          <Text><b>Faça seu cadastro em uma nova guia anônima. (CTRL + SHIFT + N)</b></Text>
+        </Box>
 
         <Divider my='6' borderColor='blueOficial' />
 
