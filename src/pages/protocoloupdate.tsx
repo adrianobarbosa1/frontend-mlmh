@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
-import { Box, Divider, Flex, Heading, Text } from '@chakra-ui/react'
+import { Divider, Flex, Heading, Text } from '@chakra-ui/react'
 import animationData from '../../public/img/success.json'
-// import Lottie from 'react-lottie';
-import { Player, Controls } from '@lottiefiles/react-lottie-player';
+import { Player } from '@lottiefiles/react-lottie-player';
 import { useAppSelector } from '../app/hooks';
 import { selectRegister } from '../features/register/registerSlice';
 
-export default function Protocolo() {
+export default function ProtocoloUpdate() {
     const [animation, setAnimation] = useState({
         isStopped: false, isPaused: false
     })
@@ -39,7 +38,7 @@ export default function Protocolo() {
                     textAlign='center'
                     mb='2rem'
                 >
-                    Cadastro realizado com sucesso!
+                    Atualização realizada com sucesso!
                 </Heading>
                 <Text
                     fontWeight='bold'
@@ -55,6 +54,7 @@ export default function Protocolo() {
                     Informamos ainda que, o número de protocolo é pessoal e intransferível!
                 </Text>
                 <Flex as='figure' justify='center'>
+
                     <Player
                         autoplay={true}
                         loop={false}
@@ -72,7 +72,7 @@ export default function Protocolo() {
                     textAlign='center'
                     mb='2rem'
                 >
-                    Seu protocolo é: {`${register}`}
+                    Seu protocolo é: {`${register?.protocolo}`}
                 </Heading>
             </Flex>
         </Flex >

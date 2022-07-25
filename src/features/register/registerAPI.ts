@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { api } from '../../services/api';
-import { Register, RegisterResponse } from './register.interface';
+import { Register, RegisterProtocolo } from './register.interface';
 
 export async function cepAddress(cep: string): Promise<any | undefined> {
     try {
@@ -24,9 +24,33 @@ export async function cpfExist(cpf: string): Promise<any | undefined> {
     return response;
 }
 
+export async function loginProtocolo(protocolo: RegisterProtocolo): Promise<any | undefined> {
+    const response = api
+        .post<RegisterProtocolo>(`/register/login-protocolo`, protocolo)
+        .then((response) => {
+            return response;
+        })
+        .catch((error) => {
+            throw new Error(error.response.data.message);
+        });
+    return response;
+}
+
+export async function updateRegister(data: Register): Promise<any | undefined> {
+    const response = api
+        .put(`/register`, data)
+        .then((response) => {
+            return response;
+        })
+        .catch((error) => {
+            throw new Error(error.response.data.message);
+        });
+    return response;
+}
+
 export async function registerCreate(data: Register) {
     const response = api
-        .post<RegisterResponse>("/register", data)
+        .post<RegisterProtocolo>("/register", data)
         .then((response) => {
             return response;
         })

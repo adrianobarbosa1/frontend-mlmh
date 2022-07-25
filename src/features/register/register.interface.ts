@@ -50,6 +50,6 @@ export interface RegisterState {
     status: "idle" | "loading" | "failed";
 }
 
-export interface RegisterResponse {
+export interface RegisterProtocolo {
     protocolo: string;
 }

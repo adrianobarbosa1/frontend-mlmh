@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppState } from "../../app/store";
-import { Register, RegisterState } from "./register.interface";
-import { cepAddress, cpfExist, existeCpf, registerCreate } from "./registerAPI";
+import { Register, RegisterProtocolo, RegisterState } from "./register.interface";
+import { cepAddress, cpfExist, existeCpf, loginProtocolo, registerCreate, updateRegister } from "./registerAPI";
 
 const initialState: RegisterState = {
     register: {
@@ -59,11 +59,27 @@ export const getCpfExist = createAsyncThunk(
     }
 );
 
+export const getLoginProtocolo = createAsyncThunk(
+    "register/getLoginProtocolo",
+    async (protocolo: RegisterProtocolo) => {
+        const response = await loginProtocolo(protocolo);
+        return response.data;
+    }
+);
+
 export const postRegister = createAsyncThunk(
     "register/postRegister",
     async (data: Register) => {
         const response = await registerCreate(data);
         return response.data.protocolo
+    }
+);
+
+export const putRegister = createAsyncThunk(
+    "register/putRegister",
+    async (data: Register) => {
+        const response = await updateRegister(data);
+        return response.data;
     }
 );
 
@@ -125,12 +141,31 @@ export const registerSlice = createSlice({
             .addCase(postRegister.rejected, (state, action) => {
                 state.status = "idle";
             })
+            .addCase(putRegister.pending, (state) => {
+                state.status = "loading";
+            })
+            .addCase(putRegister.fulfilled, (state, action) => {
+                state.status = "idle";
+            })
+            .addCase(putRegister.rejected, (state, action) => {
+                state.status = "idle";
+            })
             .addCase(postExistCpf.pending, (state) => {
                 state.status = "loading";
             })
             .addCase(postExistCpf.fulfilled, (state, action) => {
                 state.status = "idle";
                 state.cpfExiste = action.payload;
+            })
+            .addCase(getLoginProtocolo.pending, (state) => {
+                state.status = "loading";
+            })
+            .addCase(getLoginProtocolo.fulfilled, (state, action) => {
+                state.status = "idle";
+                state.register = { ...state.register, ...action.payload };
+            })
+            .addCase(getLoginProtocolo.rejected, (state, action) => {
+                state.status = "idle";
             })
     },
 })

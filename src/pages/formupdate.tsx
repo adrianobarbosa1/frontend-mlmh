@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -7,9 +7,6 @@ import {
   FormControl,
   FormLabel,
   Heading,
-  HStack,
-  Radio,
-  RadioGroup,
   Input as ChakraInput,
   Select,
   SimpleGrid,
@@ -34,7 +31,7 @@ import {
 
 } from "@chakra-ui/react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import NumberFormat from "react-number-format";
 import { useRouter } from "next/router";
 import { QuestionOutlineIcon } from "@chakra-ui/icons";
@@ -44,14 +41,12 @@ import { BsFillTrashFill } from "react-icons/bs";
 import {
   getCepAddress,
   getCpfExist,
-  limparIntegrante,
-  postRegister,
-  registerUser,
+  putRegister,
   removeIntegrante,
   selectRegister
 } from "../features/register/registerSlice";
 import { ModalGrupoFamiliar } from "../components/Modal/ModalGrupoFamiliar";
-import { Register, RegisterResponse } from "../features/register/register.interface";
+import { Register } from "../features/register/register.interface";
 
 type InputEvent = React.ChangeEvent<HTMLInputElement>
 // type ButtonEvent = React.MouseEvent<HTMLButtonElement>;
@@ -78,12 +73,51 @@ export default function Form() {
   const wathGrupoFamiliar = watch('grupo_familiar')
   const wathCadunico = watch('cadunico')
 
+
   useEffect(() => {
-    if (registro?.logradouro) {
-      setValue("logradouro", registro.logradouro, { shouldValidate: true });
-      setValue("bairro", registro.bairro, { shouldValidate: true });
-      setValue("localidade", registro.localidade, { shouldValidate: true });
-      setValue("uf", registro.uf, { shouldValidate: true });
+    if (registro?.cpf) {
+      const dtNascimentoDb = new Date(registro?.dt_nascimento)
+      const dtNascimento = new Intl.DateTimeFormat('pt-BR').format(dtNascimentoDb)
+
+      setValue("cpf", registro?.cpf, { shouldValidate: true })
+      setValue("nome", registro?.nome, { shouldValidate: true })
+      setValue("email", registro?.email, { shouldValidate: true })
+      setValue("rg", registro?.rg, { shouldValidate: true })
+      setValue("uf_rg", registro?.uf_rg, { shouldValidate: true })
+      setValue("dt_nascimento", dtNascimento, { shouldValidate: true })
+      setValue("fone_celular", registro?.fone_celular, { shouldValidate: true })
+      setValue("fone_fixo", registro?.fone_fixo, { shouldValidate: true })
+      setValue("sexo", registro?.sexo, { shouldValidate: true })
+      setValue("portador_pcd", registro?.portador_pcd, { shouldValidate: true })
+      setValue("estado_civil", registro?.estado_civil, { shouldValidate: true })
+      setValue("nacionalidade", registro?.nacionalidade, { shouldValidate: true })
+      setValue("cep", registro?.cep, { shouldValidate: true })
+      setValue("logradouro", registro?.logradouro, { shouldValidate: true });
+      setValue("quadra", registro?.quadra, { shouldValidate: true })
+      setValue("lote", registro?.lote, { shouldValidate: true })
+      setValue("complemento", registro?.complemento, { shouldValidate: true })
+      setValue("bairro", registro?.bairro, { shouldValidate: true });
+      setValue("localidade", registro?.localidade, { shouldValidate: true });
+      setValue("uf", registro?.uf, { shouldValidate: true });
+      setValue("reside_ano", registro?.reside_ano, { shouldValidate: true })
+      setValue("renda_bruta", registro?.renda_bruta, { shouldValidate: true })
+      setValue("cadunico", registro?.cadunico, { shouldValidate: true })
+      setValue("numero_cadunico", registro?.numero_cadunico, { shouldValidate: true })
+      setValue("possui_imovel", registro?.possui_imovel, { shouldValidate: true })
+      setValue("contemplado_habitacional", registro?.contemplado_habitacional, { shouldValidate: true })
+      setValue("comprador_imovel", registro?.comprador_imovel, { shouldValidate: true })
+      setValue("arrimo_familia", registro?.arrimo_familia, { shouldValidate: true })
+      setValue("vitima_violencia", registro?.vitima_violencia, { shouldValidate: true })
+      setValue("grupo_familiar", registro?.grupo_familiar, { shouldValidate: true })
+    } else {
+      toast({
+        position: 'top',
+        title: "Ocorreu um erro.",
+        description: `Por favor Entre com o seu número de protocolo`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      })
     }
   }, [registro, setValue])
 
@@ -126,14 +160,12 @@ export default function Form() {
 
   const onSubmit = (data: Register) => {
     data.dt_nascimento = data.dt_nascimento.split('/').reverse().join('-');
-    data.integrantes = integrantes
+    data.protocolo = registro?.protocolo
 
-    dispatch(postRegister(data))
+    dispatch(putRegister(data))
       .unwrap()
       .then((result) => {
-        dispatch(registerUser(result));
-        dispatch(limparIntegrante());
-        router.push("/protocolo");
+        router.push("/protocoloupdate");
       })
       .catch((error) => {
         toast({
@@ -245,7 +277,6 @@ export default function Form() {
           </SimpleGrid>
 
           <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
-
             <FormControl isInvalid={!!errors.rg} >
               <FormLabel htmlFor='rg'>
                 <Box display='inline-block' mr={3}>
@@ -296,7 +327,7 @@ export default function Form() {
             </FormControl>
 
             <FormControl isInvalid={!!errors.fone_celular}>
-              <FormLabel htmlFor='vitima_violencia'>
+              <FormLabel htmlFor='fone_celular'>
                 <Box display='inline-block' mr={3}>
                   Whatsapp*
                 </Box>
@@ -354,52 +385,52 @@ export default function Form() {
           <SimpleGrid
             minChildWidth='240px'
             spacing='4' w='100%'
-            sx={{ display: 'flex', justifyContent: 'flex-start' }}
           >
             <FormControl isInvalid={!!errors.sexo}>
-
               <Flex direction='column'>
-                <FormLabel as='legend'>Sexo*</FormLabel>
-                <RadioGroup name='sexo'>
-                  <HStack spacing='24px'>
-                    <Radio value='masculino' type="radio"
-                      {...register("sexo", { required: 'O campo sexo é obrigatório' })}>Masculino</Radio>
-                    <Radio value='feminino' type="radio"
-                      {...register("sexo", { required: 'O campo sexo é obrigatório' })}>Feminino</Radio>
-                  </HStack>
-                </RadioGroup>
+                <FormLabel htmlFor='sexo'>
+                  <Box display='inline-block' mr={3}>
+                    sexo*
+                  </Box>
+                </FormLabel>
+                <Select
+                  placeholder=' '
+                  {...register("sexo", { required: "Campo obrigatório." })}>
+                  <option value={'MASCULINO'}>Masculino</option>
+                  <option value={'FEMININO'}>Feminino</option>
+
+                </Select>
                 <FormErrorMessage>{errors.sexo?.message}</FormErrorMessage>
               </Flex>
-
             </FormControl>
-          </SimpleGrid>
 
-          <SimpleGrid
-            minChildWidth='240px'
-            spacing='4' w='100%'
-            sx={{ display: 'flex', justifyContent: 'flex-start' }}
-          >
             <FormControl isInvalid={!!errors.portador_pcd}>
               <Flex direction='column'>
-                <FormLabel as='legend'>Portador de deficiência?*</FormLabel>
-                <RadioGroup name='portador_pcd'>
-                  <HStack spacing='24px'>
-                    <Radio value='sim' type="radio"
-                      {...register("portador_pcd", { required: 'O campo portador de deficiência é obrigatório' })}>Sim</Radio>
-                    <Radio value='nao' type="radio"
-                      {...register("portador_pcd", { required: 'O campo portador de deficiência é obrigatório' })}>Não</Radio>
-                  </HStack>
-                </RadioGroup>
+                <FormLabel htmlFor='portador_pcd'>
+                  <Box display='inline-block' mr={3}>
+                    Portador de deficiência?*
+                  </Box>
+                </FormLabel>
+                <Select
+                  placeholder=' '
+                  {...register("portador_pcd", { required: "Campo obrigatório." })}>
+                  <option value={'sim'}>Sim</option>
+                  <option value={'nao'}>Não</option>
+
+                </Select>
                 <FormErrorMessage>{errors.portador_pcd?.message}</FormErrorMessage>
               </Flex>
             </FormControl>
-          </SimpleGrid>
 
-          <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
             <FormControl isInvalid={!!errors.estado_civil}>
               <Flex direction='column'>
+                <FormLabel htmlFor='portador_pcd'>
+                  <Box display='inline-block' mr={3}>
+                    Estado Civil*
+                  </Box>
+                </FormLabel>
                 <Select
-                  placeholder='Estado Civil*'
+                  placeholder=' '
                   {...register("estado_civil", { required: "Estado civil é obrigatório." })}>
                   <option value='solteiro'>1. Solteiro</option>
                   <option value='solteiro'>2. União estavel</option>
@@ -415,8 +446,13 @@ export default function Form() {
 
             <FormControl isInvalid={!!errors.nacionalidade}>
               <Flex direction='column'>
+                <FormLabel htmlFor='portador_pcd'>
+                  <Box display='inline-block' mr={3}>
+                    Nacionalidade*
+                  </Box>
+                </FormLabel>
                 <Select
-                  placeholder='Nacionalidade*'
+                  placeholder=' '
                   {...register("nacionalidade", { required: "Nacionalidade é obrigatório." })}>
                   <option value='brasileiro'>Brasileiro</option>
                   <option value='estrangeiro'>Estrangeiro</option>
@@ -424,7 +460,6 @@ export default function Form() {
                 <FormErrorMessage>{errors.nacionalidade?.message}</FormErrorMessage>
               </Flex>
             </FormControl>
-
           </SimpleGrid>
         </VStack>
 
@@ -438,7 +473,7 @@ export default function Form() {
           Dados do endereço
         </Heading>
 
-        <VStack spacing='4'>
+        <VStack spacing={6}>
           <SimpleGrid minChildWidth='240px' mt={2} spacing='4' w='100%'>
             <FormControl isInvalid={!!errors.cep}>
               <FormLabel htmlFor='cep'>
@@ -473,14 +508,10 @@ export default function Form() {
                 </Box>
               </FormLabel>
               <ChakraInput bgColor='gray.50'
-                {...register("logradouro", { required: "Logradouro é obrigatório." })}
+                {...register("logradouro", { required: "Campo obrigatório." })}
               />
               <FormErrorMessage>{errors.logradouro?.message}</FormErrorMessage>
             </FormControl>
-
-
-
-
           </SimpleGrid>
 
           <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
@@ -666,13 +697,12 @@ export default function Form() {
             </FormControl>
           </Flex>
 
-          <FormControl isInvalid={!!errors.cadunico}>
-            <SimpleGrid
-              minChildWidth='240px'
-              spacing='4' w='100%'
-              sx={{ display: 'flex', justifyContent: 'flex-start' }}
-            >
-
+          <SimpleGrid
+            minChildWidth='240px'
+            spacing='4' w='100%'
+          // sx={{ display: 'flex', justifyContent: 'flex-start' }}
+          >
+            <FormControl isInvalid={!!errors.cadunico}>
               <Flex direction='column'>
                 <FormLabel htmlFor='cadunico'>
                   <Box display='inline-block' mr={3}>
@@ -694,22 +724,19 @@ export default function Form() {
                     </PopoverContent>
                   </Popover>
                 </FormLabel>
-                <RadioGroup name='cadunico'>
-                  <HStack spacing='24px'>
-                    <Radio value='sim' type="radio"
-                      {...register("cadunico", { required: 'Campo obrigatório' })}>Sim</Radio>
-                    <Radio value='nao' type="radio"
-                      {...register("cadunico", { required: 'Campo obrigatório' })}>Não</Radio>
-                  </HStack>
-                </RadioGroup>
-                <FormErrorMessage>{errors.cadunico?.message}</FormErrorMessage>
+                <Select
+                  placeholder=' '
+                  {...register("cadunico", { required: "Campo obrigatório." })}>
+                  <option value={'sim'}>Sim</option>
+                  <option value={'nao'}>Não</option>
+
+                </Select>
+                <FormErrorMessage>{errors.portador_pcd?.message}</FormErrorMessage>
               </Flex>
+            </FormControl>
 
-            </SimpleGrid>
-          </FormControl>
+            {wathCadunico == 'sim' &&
 
-          {wathCadunico == 'sim' &&
-            <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
 
               <FormControl isInvalid={!!errors.numero_cadunico} >
                 <FormLabel htmlFor='numero_cadunico'>
@@ -738,17 +765,12 @@ export default function Form() {
                 />
                 <FormErrorMessage>{errors.numero_cadunico?.message}</FormErrorMessage>
               </FormControl>
-            </SimpleGrid>}
+            }
+          </SimpleGrid>
 
-          <FormControl isInvalid={!!errors.possui_imovel}>
-            <SimpleGrid
-              minChildWidth='240px'
-              spacing='4' w='100%'
-              sx={{ display: 'flex', justifyContent: 'flex-start' }}
-            >
-
+          <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
+            <FormControl isInvalid={!!errors.possui_imovel}>
               <Flex direction='column'>
-
                 <FormLabel htmlFor='possui_imovel'>
                   <Box display='inline-block' mr={3}>
                     Algum membro do grupo familiar possui ou possuiu imóvel nos últimos
@@ -766,27 +788,20 @@ export default function Form() {
                     </PopoverContent>
                   </Popover>
                 </FormLabel>
+                <Select
+                  placeholder=' '
+                  {...register("possui_imovel", { required: "Campo obrigatório." })}>
+                  <option value={'sim'}>Sim</option>
+                  <option value={'nao'}>Não</option>
 
-                <RadioGroup name='possui_imovel'>
-                  <HStack spacing='24px'>
-                    <Radio value='sim' type="radio"
-                      {...register("possui_imovel", { required: 'Campo obrigatório' })}>Sim</Radio>
-                    <Radio value='nao' type="radio"
-                      {...register("possui_imovel", { required: 'Campo obrigatório' })}>Não</Radio>
-                  </HStack>
-                </RadioGroup>
+                </Select>
                 <FormErrorMessage>{errors.possui_imovel?.message}</FormErrorMessage>
               </Flex>
+            </FormControl>
+          </SimpleGrid>
 
-            </SimpleGrid>
-          </FormControl>
-
-          <FormControl isInvalid={!!errors.contemplado_habitacional}>
-            <SimpleGrid
-              minChildWidth='240px'
-              spacing='4' w='100%'
-              sx={{ display: 'flex', justifyContent: 'flex-start' }}
-            >
+          <SimpleGrid minChildWidth='240px' spacing='4' w='100%'>
+            <FormControl isInvalid={!!errors.contemplado_habitacional}>
               <Flex direction='column'>
                 <FormLabel htmlFor='contemplado_habitacional'>
                   <Box display='inline-block' mr={3}>
@@ -806,30 +821,19 @@ export default function Form() {
                     </PopoverContent>
                   </Popover>
                 </FormLabel>
+                <Select
+                  placeholder=' '
+                  {...register("contemplado_habitacional", { required: "Campo obrigatório." })}>
+                  <option value={'sim'}>Sim</option>
+                  <option value={'nao'}>Não</option>
 
-                <RadioGroup name='contemplado_habitacional'>
-                  <HStack spacing='24px'>
-                    <Radio value='sim' type="radio"
-                      {...register("contemplado_habitacional", { required: 'Campo obrigatório' })}>Sim</Radio>
-                    <Radio value='nao' type="radio"
-                      {...register("contemplado_habitacional", { required: 'Campo obrigatório' })}>Não</Radio>
-                  </HStack>
-                </RadioGroup>
+                </Select>
                 <FormErrorMessage>{errors.contemplado_habitacional?.message}</FormErrorMessage>
               </Flex>
+            </FormControl>
 
-            </SimpleGrid>
-          </FormControl>
-
-          <FormControl isInvalid={!!errors.comprador_imovel}>
-            <SimpleGrid
-              minChildWidth='240px'
-              spacing='4' w='100%'
-              sx={{ display: 'flex', justifyContent: 'flex-start' }}
-            >
-
+            <FormControl isInvalid={!!errors.comprador_imovel}>
               <Flex direction='column'>
-
                 <FormLabel htmlFor='comprador_imovel'>
                   <Box display='inline-block' mr={3}>
                     Possui membro do grupo familiar promitente comprador de qualquer imóvel
@@ -848,30 +852,24 @@ export default function Form() {
                     </PopoverContent>
                   </Popover>
                 </FormLabel>
+                <Select
+                  placeholder=' '
+                  {...register("comprador_imovel", { required: "Campo obrigatório." })}>
+                  <option value={'sim'}>Sim</option>
+                  <option value={'nao'}>Não</option>
 
-                <RadioGroup name='comprador_imovel'>
-                  <HStack spacing='24px'>
-                    <Radio value='sim' type="radio"
-                      {...register("comprador_imovel", { required: 'Campo obrigatório' })}>Sim</Radio>
-                    <Radio value='nao' type="radio"
-                      {...register("comprador_imovel", { required: 'Campo obrigatório' })}>Não</Radio>
-                  </HStack>
-                </RadioGroup>
+                </Select>
                 <FormErrorMessage>{errors.comprador_imovel?.message}</FormErrorMessage>
               </Flex>
+            </FormControl>
+          </SimpleGrid>
 
-            </SimpleGrid>
-          </FormControl>
-
-          <FormControl isInvalid={!!errors.arrimo_familia}>
-            <SimpleGrid
-              minChildWidth='240px'
-              spacing='4' w='100%'
-              sx={{ display: 'flex', justifyContent: 'flex-start' }}
-            >
-
+          <SimpleGrid
+            minChildWidth='240px'
+            spacing='4' w='100%'
+          >
+            <FormControl isInvalid={!!errors.arrimo_familia}>
               <Flex direction='column'>
-
                 <FormLabel htmlFor='arrimo_familia'>
                   <Box display='inline-block' mr={3}>
                     Mulher arrimo de família?*
@@ -883,32 +881,22 @@ export default function Form() {
                     <PopoverContent>
                       <PopoverArrow />
                       <PopoverCloseButton />
-                      <PopoverBody bg='yellow.100'>Mulher que é a principal fonte de renda da família</PopoverBody>
+                      <PopoverBody bg='yellow.100'>Mulher que é a principal fonte de renda da família.</PopoverBody>
                     </PopoverContent>
                   </Popover>
                 </FormLabel>
+                <Select
+                  placeholder=' '
+                  {...register("arrimo_familia", { required: "Campo obrigatório." })}>
+                  <option value={'sim'}>Sim</option>
+                  <option value={'nao'}>Não</option>
 
-                <RadioGroup name='arrimo_familia'>
-                  <HStack spacing='24px'>
-                    <Radio value='sim' type="radio"
-                      {...register("arrimo_familia", { required: 'Campo obrigatório' })}>Sim</Radio>
-                    <Radio value='nao' type="radio"
-                      {...register("arrimo_familia", { required: 'Campo obrigatório' })}>Não</Radio>
-                  </HStack>
-                </RadioGroup>
+                </Select>
                 <FormErrorMessage>{errors.arrimo_familia?.message}</FormErrorMessage>
               </Flex>
+            </FormControl>
 
-            </SimpleGrid>
-          </FormControl>
-
-          <FormControl isInvalid={!!errors.vitima_violencia}>
-            <SimpleGrid
-              minChildWidth='240px'
-              spacing='4' w='100%'
-              sx={{ display: 'flex', justifyContent: 'flex-start' }}
-            >
-
+            <FormControl isInvalid={!!errors.vitima_violencia}>
               <Flex direction='column'>
                 <FormLabel htmlFor='vitima_violencia'>
                   <Box display='inline-block' mr={3}>
@@ -930,30 +918,23 @@ export default function Form() {
                     </PopoverContent>
                   </Popover>
                 </FormLabel>
+                <Select
+                  placeholder=' '
+                  {...register("vitima_violencia", { required: "Campo obrigatório." })}>
+                  <option value={'sim'}>Sim</option>
+                  <option value={'nao'}>Não</option>
 
-                <RadioGroup name='vitima_violencia'>
-                  <HStack spacing='24px'>
-                    <Radio value='sim' type="radio"
-                      {...register("vitima_violencia", { required: 'Campo obrigatório' })}>Sim</Radio>
-                    <Radio value='nao' type="radio"
-                      {...register("vitima_violencia", { required: 'Campo obrigatório' })}>Não</Radio>
-                  </HStack>
-                </RadioGroup>
+                </Select>
                 <FormErrorMessage>{errors.vitima_violencia?.message}</FormErrorMessage>
               </Flex>
+            </FormControl>
+          </SimpleGrid>
 
-            </SimpleGrid>
-          </FormControl>
-
-          <Divider my='6' borderColor='blueOficial' />
-
-          <FormControl isInvalid={!!errors.grupo_familiar}>
-            <SimpleGrid
-              minChildWidth='240px'
-              spacing='4' w='100%'
-              sx={{ display: 'flex', justifyContent: 'flex-start' }}
-            >
-
+          <SimpleGrid
+            minChildWidth='240px'
+            spacing='4' w='100%'
+          >
+            <FormControl isInvalid={!!errors.grupo_familiar}>
               <Flex direction='column'>
                 <FormLabel htmlFor='grupo_familiar'>
                   <Box display='inline-block' mr={3}>
@@ -973,20 +954,19 @@ export default function Form() {
                     </PopoverContent>
                   </Popover>
                 </FormLabel>
+                <Select
+                  placeholder=' '
+                  {...register("grupo_familiar", { required: "Campo obrigatório." })}>
+                  <option value={'sim'}>Sim</option>
+                  <option value={'nao'}>Não</option>
 
-                <RadioGroup name='grupo_familiar'>
-                  <HStack spacing='24px'>
-                    <Radio value='sim' type="radio"
-                      {...register("grupo_familiar", { required: 'Campo obrigatório' })}>Sim</Radio>
-                    <Radio value='nao' type="radio"
-                      {...register("grupo_familiar", { required: 'Campo obrigatório' })}>Não</Radio>
-                  </HStack>
-                </RadioGroup>
+                </Select>
                 <FormErrorMessage>{errors.grupo_familiar?.message}</FormErrorMessage>
               </Flex>
+            </FormControl>
+          </SimpleGrid>
 
-            </SimpleGrid>
-          </FormControl>
+          <Divider my='6' borderColor='blueOficial' />
 
           {wathGrupoFamiliar == 'sim' &&
 
@@ -1091,8 +1071,89 @@ export default function Form() {
                       </Flex>
                     )
                   })}
-                </Grid >
 
+                  {registro?.integrantes !== undefined && registro?.integrantes.map((item, index) => {
+                    return (
+                      <Flex key={index}
+                        maxW={{ base: '330px', md: '230px' }}
+                        bg='gray.800'
+                        borderWidth="1px"
+                        rounded="lg"
+                        shadow="lg"
+                        textAlign='center'
+                      >
+
+
+                        <Box w='100%' h='100%' bg='blue.100' px={2} py={10}
+                          fontSize={'sm'}>
+                          <Heading as='h6' size='xs' mb={4} color={'blue.500'}>
+                            Integrante {index + 1}
+                          </Heading>
+                          <List spacing={3}>
+                            <ListItem >
+                              <Heading as='h6' size='xs' color={'blue.500'}>
+                                Nome:
+                              </Heading>
+                              {item.gf_nome}
+                            </ListItem>
+                            <ListItem>
+                              <Heading as='h6' size='xs' color={'blue.500'}>
+                                Data de nascimento:
+                              </Heading>
+                              {item.gf_dt_nascimento}
+                            </ListItem>
+
+                            {item.gf_cpf !== undefined &&
+                              <ListItem>
+                                <Heading as='h6' size='xs' color={'blue.500'}>
+                                  CPF:
+                                </Heading>
+                                {item.gf_cpf}
+                              </ListItem>
+                            }
+
+                            {item.gf_rg_certidao !== undefined &&
+
+                              <ListItem>
+                                <Heading as='h6' size='xs' color={'blue.500'}>
+                                  RG/ Certidão:
+                                </Heading>
+                                {item.gf_rg_certidao}
+                              </ListItem>
+                            }
+
+                            <ListItem>
+                              <Heading as='h6' size='xs' color={'blue.500'}>
+                                PCD:
+                              </Heading>
+                              {item.gf_pcd}
+                            </ListItem>
+                            <ListItem>
+                              <Heading as='h6' size='xs' color={'blue.500'}>
+                                Parentesco:
+                              </Heading>
+                              {item.gf_parentesco}
+                            </ListItem>
+                          </List>
+
+
+                          <Flex justify='center' mt={8}>
+                            <ButtonGroup variant="solid" size="sm" spacing={3}>
+
+                              <IconButton
+                                colorScheme="red"
+                                icon={<BsFillTrashFill />}
+                                aria-label="Delete"
+                                onClick={() => onClickDelete(item.integrante)}
+                              />
+                            </ButtonGroup>
+                          </Flex>
+                        </Box>
+                      </Flex>
+                    )
+                  })}
+
+                </Grid >
               </Flex>
 
             </>
@@ -1117,7 +1178,7 @@ export default function Form() {
               variant="no-effects"
               px="30px"
             >
-              Cadastrar
+              Atualizar
             </Button>
           ) : ''}
 
