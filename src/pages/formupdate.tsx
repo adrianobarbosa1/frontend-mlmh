@@ -159,6 +159,7 @@ export default function Form() {
   }
 
   const onSubmit = (data: Register) => {
+    data.integrantes = integrantes
     data.dt_nascimento = data.dt_nascimento.split('/').reverse().join('-');
     data.protocolo = registro?.protocolo
 

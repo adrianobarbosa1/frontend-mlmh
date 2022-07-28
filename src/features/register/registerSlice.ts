@@ -146,6 +146,8 @@ export const registerSlice = createSlice({
             })
             .addCase(putRegister.fulfilled, (state, action) => {
                 state.status = "idle";
+                state.integrantes = action.payload.integrantes
+                state.register = { ...state.register, ...action.payload };
             })
             .addCase(putRegister.rejected, (state, action) => {
                 state.status = "idle";
