@@ -12,10 +12,11 @@ import {
   Image,
   HStack
 } from '@chakra-ui/react';
-import MobileNav from './MobileNav';
+import { useRouter } from "next/router";
 
 export default function WithSubnavigation() {
   const { isOpen, onToggle } = useDisclosure();
+  const router = useRouter();
 
   return (
     <Box
@@ -79,7 +80,9 @@ export default function WithSubnavigation() {
             // href={'#'}
             _hover={{
               bg: 'yellowOficial',
-            }}>
+            }}
+            onClick={() => router.push('/login')}
+          >
             Gestor
           </Button>
         </Stack>
