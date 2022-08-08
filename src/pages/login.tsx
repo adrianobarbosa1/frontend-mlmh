@@ -12,10 +12,28 @@ import {
     HStack
 
 } from '@chakra-ui/react';
+import { useContext, useState } from 'react';
+import { AuthContext } from '../components/contexts/AuthContext';
 
-export default function SimpleCard() {
+export default function Login() {
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+
+    const { signIn } = useContext(AuthContext)
+
+    const handleSubmit = async (event) => {
+        event.preventDefault()
+        const data = {
+            email,
+            password
+        }
+
+        await signIn(data)
+    }
     return (
         <Flex
+            as='form'
+            onSubmit={handleSubmit}
             minH={'100vh'}
             align={'center'}
             justify={'center'}
@@ -49,11 +67,19 @@ export default function SimpleCard() {
                     <Stack spacing={4}>
                         <FormControl id="email">
                             <FormLabel>E-mail</FormLabel>
-                            <Input type="email" />
+                            <Input
+                                type="email"
+                                value={email}
+                                onChange={e => setEmail(e.target.value)}
+                            />
                         </FormControl>
                         <FormControl id="password">
                             <FormLabel>Senha</FormLabel>
-                            <Input type="password" />
+                            <Input
+                                type="password"
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
+                            />
                         </FormControl>
                         <Stack spacing={10}>
                             <Stack
@@ -64,6 +90,7 @@ export default function SimpleCard() {
                                 {/* <Link color={'blue.400'}>Forgot password?</Link> */}
                             </Stack>
                             <Button
+                                type='submit'
                                 bg={'blueGradient'}
                                 color={'white'}
                                 _hover={{

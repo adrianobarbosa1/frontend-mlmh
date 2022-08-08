@@ -7,10 +7,14 @@ import {
     Text,
     MenuList,
     Avatar,
-    Heading
+    Heading,
+    AvatarBadge
 } from "@chakra-ui/react";
+import { useContext } from "react";
+import { AuthContext } from "../contexts/AuthContext";
 
 export default function NavItemAvatar({ navSize, title, active }) {
+    const { user } = useContext(AuthContext)
     return (
         <Flex
             mt={2}
@@ -27,10 +31,13 @@ export default function NavItemAvatar({ navSize, title, active }) {
                     w={navSize == 'large' && '100%'}
                 >
                     <MenuButton w='100%'>
-                        <Avatar size={navSize == 'small' ? 'sm' : 'md'} src='https://bit.ly/ryan-florence' alignItems={navSize == 'small' ? 'center' : 'flex-start'} />
+                        <Avatar size={navSize == 'small' ? 'sm' : 'md'} alignItems={navSize == 'small' ? 'center' : 'flex-start'} >
+                            <AvatarBadge boxSize='1.25em' bg={!!user ? 'green.500' : 'tomato'} />
+                        </Avatar>
+
                         <Flex flexDir='column' w='130px' ml={4} mt={2} display={navSize == 'small' ? 'none' : 'flex'}>
                             <Heading as='h3' size='sm' display={navSize == 'small' ? 'none' : 'flex'}>{title}</Heading>
-                            <Text color='#d3d7ff'>Admin</Text>
+                            <Text color='#d3d7ff'>{user?.role}</Text>
                         </Flex>
                     </MenuButton>
                 </Link>
