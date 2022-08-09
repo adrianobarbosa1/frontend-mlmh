@@ -78,9 +78,11 @@ export default function Form() {
 
   useEffect(() => {
     if (registro?.cpf) {
-      const dtNascimentoDb = new Date(registro?.dt_nascimento)
-      const dtNascimento = new Intl.DateTimeFormat('pt-BR').format(dtNascimentoDb)
+      console.log(registro?.dt_nascimento)
 
+      const dtNascimento = new Date(registro?.dt_nascimento).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
+
+      // const dtNascimento = new Intl.DateTimeFormat('pt-BR').format(dtNascimentoDb)
       setValue("cpf", registro?.cpf, { shouldValidate: true })
       setValue("nome", registro?.nome, { shouldValidate: true })
       setValue("email", registro?.email, { shouldValidate: true })
