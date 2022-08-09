@@ -78,9 +78,8 @@ export default function Form() {
 
   useEffect(() => {
     if (registro?.cpf) {
-      console.log(registro?.dt_nascimento)
-
-      const dtNascimento = new Date(registro?.dt_nascimento).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
+      const dtNascimento = new Date(registro?.dt_nascimento)
+        .toLocaleDateString('pt-BR', { timeZone: 'UTC' })
 
       // const dtNascimento = new Intl.DateTimeFormat('pt-BR').format(dtNascimentoDb)
       setValue("cpf", registro?.cpf, { shouldValidate: true })
