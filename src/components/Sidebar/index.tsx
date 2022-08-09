@@ -6,7 +6,7 @@ import {
     IconButton,
     Text
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
     FiMenu,
     FiHome,
@@ -17,12 +17,14 @@ import {
     FiCalendar
 } from 'react-icons/fi'
 import { IoPawOutline } from 'react-icons/io5'
+import { AuthContext } from "../contexts/AuthContext";
 
 import NavItem from "./NavItem";
 import NavItemAvatar from "./NavItemAvatar";
 
 export default function Sidebar() {
     const [navSize, changeNavSize] = useState('small')
+    const { user } = useContext(AuthContext)
     return (
         <Flex
             bg='blueGradient'
@@ -57,7 +59,7 @@ export default function Sidebar() {
                 />
 
 
-                <NavItemAvatar navSize={navSize} title={'Adriano Barbosa'} />
+                <NavItemAvatar navSize={navSize} title={user?.name} />
 
                 <Divider display={navSize == 'small' ? 'none' : 'flex'} />
 
