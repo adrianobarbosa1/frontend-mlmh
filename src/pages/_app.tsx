@@ -7,7 +7,6 @@ import { Provider } from "react-redux";
 import { theme } from '../styles/theme'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import store from '../app/store';
-import { AuthProvider } from '../components/contexts/AuthContext';
 
 const GlobalStyle = ({ children }: { children: ReactNode }) => {
   return (
@@ -38,9 +37,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Provider store={store}>
         <ChakraProvider theme={theme}>
           <GlobalStyle>
-            <AuthProvider>
-              <Component {...pageProps} />
-            </AuthProvider>
+            <Component {...pageProps} />
           </GlobalStyle>
         </ChakraProvider>
       </Provider>
