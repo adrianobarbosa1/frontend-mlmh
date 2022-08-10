@@ -2,6 +2,7 @@ import {
   Button,
   Flex,
   Text,
+  useToast,
   Image,
   useDisclosure,
   Box,
@@ -19,6 +20,7 @@ export default function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { isOpen: isOpen2, onOpen: onOpen2, onClose: onClose2 } = useDisclosure()
   const router = useRouter();
+  const toast = useToast();
 
   return (
     <>
